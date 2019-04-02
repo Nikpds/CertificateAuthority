@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import Toolbar from './Toolbar/Toolbar'
 import { Layout as _layout } from 'antd';
 import utcss from '../styles/utilities.module.sass';
-import { AuthContext } from '../auth/AuthProvider'
+import { AuthContext } from '../context/AuthContext'
 
 const { Content } = _layout;
 

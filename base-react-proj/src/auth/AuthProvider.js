@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
-import { Post } from '../services/Utility'
-export const AuthContext = React.createContext({
-    isAuthenticated: true,
-    signIn: () => { },
-    signOut: () => { }
-});
+import { AuthContext } from '../context/AuthContext';
 
 const AuthProvider = props => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
 
     const signIn = (username, password) => {
-        const body = { Username: username, password: password }
-        Post('/auth/token', body);
+        //const body = { Username: username, password: password }
+        //Post('/auth/token', body);
+        setIsAuthenticated(true);
 
     }
     const signOut = () => {

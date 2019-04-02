@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Form, Icon, Input, Button, Row, Col } from 'antd';
 import utcss from '../../styles/utilities.module.sass';
-import { AuthContext } from '../AuthProvider'
+import { AuthContext } from '../../context/AuthContext';
+
 const Login = props => {
     const auth = useContext(AuthContext)
     const [username, setUsername] = useState('');
@@ -35,6 +36,7 @@ const Login = props => {
                         {...formItemLayout}>
                         <Input
                             placeholder="Enter your username"
+                            autoComplete="username"
                             prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
                             suffix={clearButton}
                             value={username}
@@ -44,9 +46,10 @@ const Login = props => {
                         label="Κωδικός"
                         {...formItemLayout}>
                         <Input.Password
+                            autoComplete="password"
                             value={password}
                             onChange={passwordHandler}
-                            placeholder="input password"/>
+                            placeholder="input password" />
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" onClick={loginHandler}> Check</Button>
