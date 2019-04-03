@@ -1,7 +1,7 @@
 import React from 'react';
 import { } from 'antd';
 import { Typography, Row, Col, Icon } from 'antd';
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 const Home = () => {
   return (
     <Row style={{ paddingTop: 40 }}>

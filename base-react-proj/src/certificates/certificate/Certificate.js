@@ -8,7 +8,7 @@ import Cert from './cert/Cert';
 import Chain from './chain/Chain';
 
 const Certificate = props => {
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(3);
     let stepComponent;
     useEffect(() => {
 
