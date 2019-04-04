@@ -9,15 +9,12 @@ using System.Threading.Tasks;
 namespace MIS.CA.Models
 {
     [Collection("Certificates")]
-    public class Certificate: IModel
-    {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id {get; set;}
+    public class Certificate: BaseModel
+    {        
 
         public string Name { get; set; }
 
-        public string Apps { get; set; }
+        public string Application { get; set; }
 
         public DateTime EndDate { get; set; }
 
