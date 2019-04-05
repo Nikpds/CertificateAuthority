@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
+using MIS.CA.Services;
 
 namespace MIS.CA.Controllers
 {
@@ -13,9 +14,12 @@ namespace MIS.CA.Controllers
     [ApiController]
     public class MainController : ControllerBase
     {
-        public MainController()
-        {
 
+        private ISshService _isshService;
+
+        public MainController(ISshService isshService)
+        {
+            this._isshService = isshService;
         }
 
         [HttpGet]
@@ -58,6 +62,22 @@ namespace MIS.CA.Controllers
             //memory.Position = 0;
             //return File(memory, GetContentType(path), Path.GetFileName(path));
 
+        }
+
+        [HttpGet("ls/{directory}")]
+        public async Task<IActionResult> ListDirectory(string directory)
+        {
+            if (String.IsNullOrEmpty(directory))
+            {
+                BadRequest("Directory is mandatory");
+            }
+            try
+            {
+                IEnumerable<string> files = _isshService.ListDirectory(directory);
+                return Ok(files);
+            } catch (Exception e) {
+                return BadRequest("Error while listing directory");
+            }
         }
 
         private string GetContentType(string path)

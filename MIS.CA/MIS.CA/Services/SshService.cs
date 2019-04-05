@@ -1,22 +1,30 @@
-﻿using System;
+﻿using MIS.CA.Models;
+using Renci.SshNet;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MIS.CA.Services
 {
-    public interface ISshService
+    public interface ISshService: IDisposable
     {
         string CreatePublicKey(string name, string size);
         string CreateCrs(string name, string keyname);
         string CreateCertificate(string name, int duration);
         string CreateBundle(string name, string certname);
+        IEnumerable<string> ListDirectory(string lsArgument);
     }
     public class SshService : ISshService
     {
+        private readonly SshClient _sshClient;
+
         public SshService()
         {
-
+            var connectionInfo = new ConnectionInfo("192.168.48.72", "geakmh", new PasswordAuthenticationMethod("geakmh", "geakmh"));
+            this._sshClient = new SshClient(connectionInfo);
+            this._sshClient.Connect();
         }
 
         public string CreateBundle(string name, string certname)
@@ -33,12 +41,46 @@ namespace MIS.CA.Services
         public string CreateCrs(string name, string keyname)
         {
             return "openssl req -config intermediate/openssl.cnf -key intermediate/private/" + keyname + ".key.pem " +
-                 "-new -sha256 -out intermediate/csr/" + name + ".csr.pem";
+                 "-new -sha256 -out intermediate/csr/" + name;
         }
 
         public string CreatePublicKey(string name, string size)
         {
             return "openssl genrsa -out intermediate/private/" + name + "key.pem " + size;
         }
+
+        public IEnumerable<string> ListDirectory(string lsArgument)
+        {
+            var command = "ls -m ";
+            SshCommand sshCommand = _sshClient.RunCommand(command);
+            return sshCommand.Result.Split(", ");
+        }
+
+
+        public void GenerateCertificate(Certificate certificate)
+        {
+
+        }
+
+
+        public void GenerateKey(string name, string size)
+        {
+            var command = CreatePublicKey(name, size);
+            SshCommand sshCommand = _sshClient.RunCommand(command);
+        }
+
+
+        public void GenerateCrs(string name, string keyname, CertificateDetails certificateDetails)
+        {
+            var command = CreateCrs(name, keyname);
+            SshCommand sshCommand = _sshClient.RunCommand(command);
+        }
+
+        public void Dispose()
+        {
+            Debug.WriteLine("Closing SSH connection...");
+            _sshClient.Dispose();
+        }
+
     }
 }

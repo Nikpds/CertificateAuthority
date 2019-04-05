@@ -14,7 +14,7 @@ namespace MIS.CA.Util
             {
                 return false;
             }
-            if (String.IsNullOrEmpty(certificate.Apps))
+            if (String.IsNullOrEmpty(certificate.Application))
             {
                 return false;
             }
