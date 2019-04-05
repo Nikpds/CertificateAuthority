@@ -82,6 +82,7 @@ namespace MIS.CA.Repositories
         public virtual async Task<T> Insert(T entity)
         {
             entity.Updated = DateTime.UtcNow;
+            entity.Id = null;
 
             await collection.InsertOneAsync(entity);
 

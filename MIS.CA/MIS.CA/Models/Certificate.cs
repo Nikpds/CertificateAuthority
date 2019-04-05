@@ -1,5 +1,4 @@
-﻿using MIS.CA.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace MIS.CA.Models
 {
-    [Collection("Certificates")]
     public class Certificate: BaseModel
     {        
 

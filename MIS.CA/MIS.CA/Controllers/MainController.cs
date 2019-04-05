@@ -69,7 +69,7 @@ namespace MIS.CA.Controllers
         {
             if (String.IsNullOrEmpty(directory))
             {
-                BadRequest("Directory is mandatory");
+                return BadRequest("Directory is mandatory");
             }
             try
             {
