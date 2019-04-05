@@ -11,7 +11,7 @@ namespace MIS.CA.Services
     public interface ISshService: IDisposable
     {
         string CreatePublicKey(string name, string size);
-        string CreateCrs(string name, string keyname);
+        string CreateCrs(string name, string keyname, CertificateDetails certificateDetails);
         string CreateCertificate(string name, int duration);
         string CreateBundle(string name, string certname);
         IEnumerable<string> ListDirectory(string lsArgument);
@@ -38,10 +38,13 @@ namespace MIS.CA.Services
                 " -in intermediate/csr/192.168.50.25.csr.pem -out intermediate/certs/" + name + ".cert.pem";
         }
 
-        public string CreateCrs(string name, string keyname)
+        public string CreateCrs(string name, string keyname, CertificateDetails certificateDetails)
         {
             return "openssl req -config intermediate/openssl.cnf -key intermediate/private/" + keyname + ".key.pem " +
-                 "-new -sha256 -out intermediate/csr/" + name;
+                "-subj '/C="+ certificateDetails.CountryName + "/ST=" + certificateDetails.StateName + "/L=" + certificateDetails.LocalityName +
+                "/O=" + certificateDetails.OrganizationName + "/OU=" + certificateDetails.UnitName + "/CN=" + certificateDetails.CommonName +
+                "/emailAddress=" + certificateDetails.Email + "' " +
+                 "-new -sha256 -out intermediate/csr/" + name + " ";
         }
 
         public string CreatePublicKey(string name, string size)
@@ -51,17 +54,15 @@ namespace MIS.CA.Services
 
         public IEnumerable<string> ListDirectory(string lsArgument)
         {
-            var command = "ls -m ";
+            var command = "ls -m " + lsArgument;
             SshCommand sshCommand = _sshClient.RunCommand(command);
             return sshCommand.Result.Split(", ");
         }
-
 
         public void GenerateCertificate(Certificate certificate)
         {
 
         }
-
 
         public void GenerateKey(string name, string size)
         {
@@ -69,10 +70,9 @@ namespace MIS.CA.Services
             SshCommand sshCommand = _sshClient.RunCommand(command);
         }
 
-
         public void GenerateCrs(string name, string keyname, CertificateDetails certificateDetails)
         {
-            var command = CreateCrs(name, keyname);
+            var command = CreateCrs(name, keyname, certificateDetails);
             SshCommand sshCommand = _sshClient.RunCommand(command);
         }
 

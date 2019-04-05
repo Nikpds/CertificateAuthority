@@ -23,8 +23,8 @@ namespace MIS.CA.Repositories
                 throw new ArgumentException("Your connection string must contain a database name", connectionString);
             }
             this.Database = client.GetDatabase(url.DatabaseName);
-            Certificates = new MongoDbRepository<Certificate>(this.Database, "certificates");
 
+            Certificates = new MongoDbRepository<Certificate>(this.Database, "Certificates");
         }
     }
 }

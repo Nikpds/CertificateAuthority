@@ -12,30 +12,42 @@ namespace MIS.CA.Controllers
     [ApiController]
     public class CertificatesController : ControllerBase
     {
-        //private readonly CertificateService _certificateService;
+        private readonly CertificateService _certificateService;
 
-        //public CertificatesController(CertificateService certificateService)
-        //{
-        //    this._certificateService = certificateService;
-        //}
-  
-        //[HttpGet]
-        //public IEnumerable<Certificate> Get()
-        //{
-        //    return _certificateService.GetAllCertificates();
-        //}
-        
-        //[HttpGet("{id}")]
-        //public Certificate GetById(string id)
-        //{
-        //    return _certificateService.GetCertificateById(id);
-        //}
-        
-        //[HttpPost]
-        //public ActionResult Create([FromBody] Certificate certificate)
-        //{
-        //    Certificate createdCertificate = _certificateService.CreateCertificate(certificate);
-        //    return CreatedAtAction(nameof(GetById), new { id = createdCertificate.Id }, createdCertificate);
-        //}
+        public CertificatesController(CertificateService certificateService)
+        {
+            this._certificateService = certificateService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            IEnumerable<Certificate> certificates = await _certificateService.GetAllCertificates();
+            return Ok(certificates);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            try
+            {
+                Certificate certificate = await _certificateService.GetCertificateById(id);
+                return Ok(certificate);
+            } catch (Exception e) {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Certificate certificate)
+        {
+            try
+            {
+                Certificate createdCertificate = await _certificateService.CreateCertificate(certificate);
+                return CreatedAtAction(nameof(GetById), new { id = createdCertificate.Id }, createdCertificate);
+            } catch (Exception e) {
+                return BadRequest(e);
+            }
+        }
     }
 }

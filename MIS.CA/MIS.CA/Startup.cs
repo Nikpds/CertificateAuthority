@@ -14,22 +14,19 @@ namespace MIS.CA
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            dbConectionString = Configuration.GetConnectionString("DefaultConnection");
-            context = new DataContext(dbConectionString);
         }
 
         public IConfiguration Configuration { get; }
-        private string dbConectionString { get; }
-        private DataContext context { get; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-         
-
             services.AddScoped<ISshService, SshService>();
             services.AddScoped<IFtpService, FtpService>();
-            services.AddScoped<IMongoDbRepository<BaseModel>, MongoDbRepository<BaseModel>>();
-            // services.AddScoped<CertificateRepository, CertificateRepository>();
+            services.AddSingleton((ctx) => {
+                var connectionString = Configuration.GetConnectionString("DefaultConnection");
+                return new DataContext(connectionString);
+            });
             services.AddScoped<CertificateService, CertificateService>();
 
             services.AddCors();
