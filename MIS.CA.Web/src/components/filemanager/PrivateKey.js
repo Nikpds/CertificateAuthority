@@ -1,32 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { List, Avatar, Button, Skeleton, Icon } from 'antd';
+import { List, Skeleton, Icon } from 'antd';
+import { Get } from '../../services/Utility';
 
 const PrivateKey = () => {
-    const [files, setFiles] = useState([{ name: 'Nikos' }, { name: 'Stefanos' }]);
+    const [files, setFiles] = useState([]);
     useEffect(() => {
-
-    });
+        getData();
+    }, []);
 
     const getData = () => {
-        return fetch('', {
-            method: "GET", // *GET, POST, PUT, DELETE, etc
-            headers: { "Content-Type": "application/json" }
-        }).then(response => {
-            const res = response.json();
-            console.log(res);
-        }).catch(error => console.error('Error:', error))
+        Get('main/ls/private').then(res => {
+            const data = res;
+            setFiles(data);
+        });
     }
     return (
         <List
             className="demo-loadmore-list"
             itemLayout="horizontal"
             dataSource={files}
+            header={<strong>
+                <Icon theme="twoTone" twoToneColor="#f5cd00" type="folder-open" /> intermediate/private
+            </strong>}
             renderItem={item => (
                 <List.Item actions={[
-                    <a><Icon type="delete" /></a>,
-                    <a><Icon type="download" /></a>]}>
+                    <span className="Link" title="Delete key"><Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" /></span>,
+                    <span className="Link" title="Download file"><Icon type="download" /></span>]}>
                     <Skeleton avatar title={false} loading={false} >
-                        <List.Item.Meta title={item.name} />
+                        <List.Item.Meta title={item} />
                     </Skeleton>
                 </List.Item>)}
         />

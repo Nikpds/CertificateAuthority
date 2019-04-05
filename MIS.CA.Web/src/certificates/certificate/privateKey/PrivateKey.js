@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Typography, Icon, Button, Form } from 'antd';
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 const PrivateKey = props => {
 
     return (
@@ -13,13 +13,9 @@ const PrivateKey = props => {
             </Form.Item>
             <Form.Item>
                 <Button type="primary" onClick={() => props.next(1)}>
-                    Generate Key
+                  Next Step
                     <Icon type="step-forward" />
-                </Button>
-                <Text type="danger">&nbsp;&nbsp;
-                        <Icon type="warning" />
-                    Warning! After this step you can't go back
-                    </Text>
+                </Button>                
             </Form.Item>
         </React.Fragment>
     );

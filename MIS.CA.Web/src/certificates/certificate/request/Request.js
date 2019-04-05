@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Icon, Input, Button, Typography } from 'antd';
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 const Request = props => {
     const formItemLayout = {
         labelCol: {
@@ -40,13 +40,9 @@ const Request = props => {
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" onClick={() => props.next(2)}>
-                        Send Request Info
+                        Next Step
                     <Icon type="step-forward" />
-                    </Button>
-                    <Text type="danger">&nbsp;&nbsp;
-                        <Icon type="warning" />
-                        Warning! After this step you can't go back
-                    </Text>
+                    </Button>                    
                 </Form.Item>
 
             </Form>

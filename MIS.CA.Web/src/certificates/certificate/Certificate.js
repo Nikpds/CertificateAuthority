@@ -6,9 +6,13 @@ import css from './Certificate.module.sass';
 import PrivateKey from './privateKey/PrivateKey';
 import Cert from './cert/Cert';
 import Chain from './chain/Chain';
-
+import DownloadFiles from './download-files/DownloadFiles'
 const Certificate = props => {
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(4);
+    const [cert, useCert] = useState({
+        key: '',
+
+    });
     let stepComponent;
     useEffect(() => {
 
@@ -19,7 +23,7 @@ const Certificate = props => {
 
     switch (step) {
         case 0:
-            stepComponent = <PrivateKey next={stepHandler} step={step} />;
+            stepComponent = <PrivateKey next={stepHandler} />;
             break;
         case 1:
             stepComponent = <Request next={stepHandler} step={step} />;
@@ -31,7 +35,7 @@ const Certificate = props => {
             stepComponent = <Chain next={stepHandler} step={step} />;
             break;
         case 4:
-            stepComponent = <Request next={stepHandler} step={step} />;
+            stepComponent = <DownloadFiles next={stepHandler} step={step} />;
             break;
         default:
             break;

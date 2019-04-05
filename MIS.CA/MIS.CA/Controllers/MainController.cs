@@ -65,9 +65,9 @@ namespace MIS.CA.Controllers
         }
 
         [HttpGet("ls/{directory}")]
-        public async Task<IActionResult> ListDirectory(string directory)
+        public  IActionResult ListDirectory(string directory)
         {
-            if (String.IsNullOrEmpty(directory))
+            if (string.IsNullOrEmpty(directory))
             {
                 return BadRequest("Directory is mandatory");
             }

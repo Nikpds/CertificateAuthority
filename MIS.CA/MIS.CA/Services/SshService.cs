@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MIS.CA.Services
 {
-    public interface ISshService: IDisposable
+    public interface ISshService : IDisposable
     {
         string CreatePublicKey(string name, string size);
         string CreateCrs(string name, string keyname, CertificateDetails certificateDetails);
@@ -22,9 +22,16 @@ namespace MIS.CA.Services
 
         public SshService()
         {
-            var connectionInfo = new ConnectionInfo("192.168.48.72", "geakmh", new PasswordAuthenticationMethod("geakmh", "geakmh"));
-            this._sshClient = new SshClient(connectionInfo);
-            this._sshClient.Connect();
+            try
+            {
+                var connectionInfo = new ConnectionInfo("192.168.48.72", "root", new PasswordAuthenticationMethod("root", "123456"));
+                _sshClient = new SshClient(connectionInfo);
+                _sshClient.Connect();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public string CreateBundle(string name, string certname)
@@ -41,7 +48,7 @@ namespace MIS.CA.Services
         public string CreateCrs(string name, string keyname, CertificateDetails certificateDetails)
         {
             return "openssl req -config intermediate/openssl.cnf -key intermediate/private/" + keyname + ".key.pem " +
-                "-subj '/C="+ certificateDetails.CountryName + "/ST=" + certificateDetails.StateName + "/L=" + certificateDetails.LocalityName +
+                "-subj '/C=" + certificateDetails.CountryName + "/ST=" + certificateDetails.StateName + "/L=" + certificateDetails.LocalityName +
                 "/O=" + certificateDetails.OrganizationName + "/OU=" + certificateDetails.UnitName + "/CN=" + certificateDetails.CommonName +
                 "/emailAddress=" + certificateDetails.Email + "' " +
                  "-new -sha256 -out intermediate/csr/" + name + " ";
@@ -54,7 +61,7 @@ namespace MIS.CA.Services
 
         public IEnumerable<string> ListDirectory(string lsArgument)
         {
-            var command = "ls -m " + lsArgument;
+            var command = "cd ca/intermediate/" + lsArgument + " ; ls -m";
             SshCommand sshCommand = _sshClient.RunCommand(command);
             return sshCommand.Result.Split(", ");
         }

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Icon, Input, Typography, Button } from 'antd';
-const { Title, Paragraph, Text } = Typography;
+import { Form, Icon, Typography, Button } from 'antd';
+const { Title, Paragraph } = Typography;
 const Chain = props => {
     return (
         <React.Fragment>

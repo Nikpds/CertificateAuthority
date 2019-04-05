@@ -33,7 +33,9 @@ namespace MIS.CA.Controllers
             {
                 Certificate certificate = await _certificateService.GetCertificateById(id);
                 return Ok(certificate);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e);
             }
         }
@@ -45,7 +47,9 @@ namespace MIS.CA.Controllers
             {
                 Certificate createdCertificate = await _certificateService.CreateCertificate(certificate);
                 return CreatedAtAction(nameof(GetById), new { id = createdCertificate.Id }, createdCertificate);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e);
             }
         }
