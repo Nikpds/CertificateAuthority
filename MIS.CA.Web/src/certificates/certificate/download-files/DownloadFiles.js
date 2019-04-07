@@ -12,6 +12,11 @@ const DownloadFiles = () => {
             </Paragraph>
             <Title level={4}><span className="Link"><Icon type="download" /> wwww.example.cert.pem</span></Title>
             <Title level={4}><span className="Link"><Icon type="download" /> www.example.key.pem</span></Title>
+            <Paragraph>
+                You need to import the certificate below.
+                It containes the chain of trust with the root and intermediate certificate
+            </Paragraph>
+            <Title level={4}><span className="Link"><Icon type="download" /> ssl-bundle.pem</span></Title>
         </React.Fragment>
     );
 };

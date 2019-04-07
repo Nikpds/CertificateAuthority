@@ -11,7 +11,9 @@ const CrtRequests = () => {
     const getData = () => {
         Get('main/ls/csr').then(res => {
             const data = res;
-            setFiles(data);
+            if (res) {
+                setFiles(data);
+            }
         });
     }
     return (

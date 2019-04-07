@@ -22,7 +22,7 @@ namespace MIS.CA.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            IEnumerable<Certificate> certificates = await _certificateService.GetAllCertificates();
+            IEnumerable<CertificateRequest> certificates = await _certificateService.GetAllCertificates();
             return Ok(certificates);
         }
 
@@ -31,7 +31,7 @@ namespace MIS.CA.Controllers
         {
             try
             {
-                Certificate certificate = await _certificateService.GetCertificateById(id);
+                CertificateRequest certificate = await _certificateService.GetCertificateById(id);
                 return Ok(certificate);
             }
             catch (Exception e)
@@ -41,11 +41,11 @@ namespace MIS.CA.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Certificate certificate)
+        public async Task<IActionResult> Insert([FromBody] CertificateRequest certificate)
         {
             try
             {
-                Certificate createdCertificate = await _certificateService.CreateCertificate(certificate);
+                CertificateRequest createdCertificate = await _certificateService.CreateCertificate(certificate);
                 return CreatedAtAction(nameof(GetById), new { id = createdCertificate.Id }, createdCertificate);
             }
             catch (Exception e)

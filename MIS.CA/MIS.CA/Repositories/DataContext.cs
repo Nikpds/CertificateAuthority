@@ -10,7 +10,7 @@ namespace MIS.CA.Repositories
     public class DataContext
     {
         public IMongoDatabase Database { get; private set; }
-        public MongoDbRepository<Certificate> Certificates { get; private set; }
+        public MongoDbRepository<CertificateRequest> Certificates { get; private set; }
 
         public DataContext(string connectionString)
         {
@@ -24,7 +24,7 @@ namespace MIS.CA.Repositories
             }
             this.Database = client.GetDatabase(url.DatabaseName);
 
-            Certificates = new MongoDbRepository<Certificate>(this.Database, "Certificates");
+            Certificates = new MongoDbRepository<CertificateRequest>(this.Database, "Certificates");
         }
     }
 }

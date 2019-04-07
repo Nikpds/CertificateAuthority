@@ -4,6 +4,7 @@ import { Get } from '../../services/Utility';
 
 const CertFiles = () => {
     const [files, setFiles] = useState([]);
+
     useEffect(() => {
         getData();
     }, []);
@@ -11,7 +12,9 @@ const CertFiles = () => {
     const getData = () => {
         Get('main/ls/certs').then(res => {
             const data = res;
-            setFiles(data);
+            if (res) {
+                setFiles(data);
+            }
         });
     }
     return (

@@ -5,37 +5,66 @@ import Request from './request/Request';
 import css from './Certificate.module.sass';
 import PrivateKey from './privateKey/PrivateKey';
 import Cert from './cert/Cert';
-import Chain from './chain/Chain';
+import Confirm from './confirmInfo/ConfirmInfo';
 import DownloadFiles from './download-files/DownloadFiles'
 const Certificate = props => {
-    const [step, setStep] = useState(4);
-    const [cert, useCert] = useState({
-        key: '',
-
+    const [step, setStep] = useState(0);
+    const [cert, setCert] = useState({
+        privateKey: '',
+        certificate: '',
+        expires: null,
+        duration: 1,
+        request: null
     });
-    let stepComponent;
     useEffect(() => {
+        console.log('This is Cert useEffect');
+    }, [cert]);
 
-    });
-    const stepHandler = (nextStep) => {
-        setStep(nextStep);
+    useEffect(() => {
+        console.log('This is Step useEffect');
+    }, [step]);
+
+    const nextStepHandler = (step, data, name) => {
+        setCert({
+            ...cert,
+            [name]: data
+        });
+        setStep(step);
     }
 
+    const finalStep = (step) => {
+        setStep(step);
+    }
+
+    const lastInfoHandler = (certificate, years) => {
+        var d = new Date();
+        var year = d.getFullYear();
+        const expires = new Date(year + years, d.getMonth(), d.getDate());
+        console.log(expires);
+        setCert({
+            ...cert,
+            expires: expires,
+            duration: years,
+            certificate: certificate
+        });
+        setStep(3)
+    }
+    let stepComponent;
     switch (step) {
         case 0:
-            stepComponent = <PrivateKey next={stepHandler} />;
+            stepComponent = <PrivateKey next={nextStepHandler} />;
             break;
         case 1:
-            stepComponent = <Request next={stepHandler} step={step} />;
+            stepComponent = <Request next={nextStepHandler} />;
             break;
         case 2:
-            stepComponent = <Cert next={stepHandler} step={step} />;
+            stepComponent = <Cert next={lastInfoHandler} />;
             break;
         case 3:
-            stepComponent = <Chain next={stepHandler} step={step} />;
+            stepComponent = <Confirm next={finalStep} cert={cert} />;
             break;
         case 4:
-            stepComponent = <DownloadFiles next={stepHandler} step={step} />;
+            stepComponent = <DownloadFiles next={finalStep} />;
             break;
         default:
             break;
@@ -46,7 +75,7 @@ const Certificate = props => {
                 {stepComponent}
             </Col>
             <Col span={6} offset={3}>
-                <Steps step={step} />
+                <Steps step={cert.step} />
             </Col>
         </Row>
     );

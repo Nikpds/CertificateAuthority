@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Typography } from 'antd';
-import PrivateKey from './PrivateKey';
+import PrivateKey from './PrivateFolder';
 import CertFiles from './CertFiles';
 import CrtRequest from './CrtRequests';
 const { Text, Title } = Typography

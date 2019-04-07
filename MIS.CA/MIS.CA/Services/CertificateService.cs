@@ -17,18 +17,18 @@ namespace MIS.CA.Services
             this._dataCtx = dataCtx;
         }
 
-        public async Task<IEnumerable<Certificate>> GetAllCertificates()
+        public async Task<IEnumerable<CertificateRequest>> GetAllCertificates()
         {
             return await _dataCtx.Certificates.GetAll();
         }
 
-        public async Task<Certificate> GetCertificateById(string certificateId)
+        public async Task<CertificateRequest> GetCertificateById(string certificateId)
         {
             if (String.IsNullOrEmpty(certificateId))
             {
                 throw new Exception("Id cannot be null or empty");
             }
-            Certificate certificate = await _dataCtx.Certificates.GetById(certificateId);
+            CertificateRequest certificate = await _dataCtx.Certificates.GetById(certificateId);
             if (String.IsNullOrEmpty(certificateId))
             {
                 throw new Exception("Certificate was not found");
@@ -36,7 +36,7 @@ namespace MIS.CA.Services
             return certificate;
         }
 
-        public async Task<Certificate> CreateCertificate(Certificate incomingCertificate)
+        public async Task<CertificateRequest> CreateCertificate(CertificateRequest incomingCertificate)
         {
             bool isValid = incomingCertificate.IsValid();
             if (!isValid)

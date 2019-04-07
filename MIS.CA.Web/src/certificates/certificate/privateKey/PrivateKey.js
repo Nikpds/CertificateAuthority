@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input, Typography, Icon, Button, Form } from 'antd';
 const { Title, Paragraph } = Typography;
 const PrivateKey = props => {
+    const [privateKey, setPrivateKey] = useState();
+
+    const inputHandler = (e) => {
+        setPrivateKey(e.target.value);
+    }
 
     return (
         <React.Fragment>
@@ -9,13 +14,13 @@ const PrivateKey = props => {
             <Paragraph>Note: The generated file will have .key.pem extention</Paragraph>
             <Paragraph code={true}>Example: if your given name is exampleKey then the generated key will be named exampleKey.key.pem</Paragraph>
             <Form.Item>
-                <Input placeholder="Private Key Name" />
+                <Input placeholder="Private Key Name" value={privateKey} onChange={inputHandler} />
             </Form.Item>
             <Form.Item>
-                <Button type="primary" onClick={() => props.next(1)}>
-                  Next Step
+                <Button type="primary" onClick={() => props.next(1, privateKey, 'privateKey')}>
+                    Next Step
                     <Icon type="step-forward" />
-                </Button>                
+                </Button>
             </Form.Item>
         </React.Fragment>
     );
