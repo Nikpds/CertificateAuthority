@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Menu, Icon } from 'antd';
 import { NavLink } from 'react-router-dom';
-import classes from './Toolbar.module.sass';
 const { Sider } = Layout;
 
 const Sidebar = () => {

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Form, Icon, Input, Button, Typography, DatePicker, Row, Col, Tooltip } from 'antd';
+import { Form, Icon, Input, Button, Typography, DatePicker, Row, Col } from 'antd';
 import classes from './IssuedCerts.sass';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title } = Typography;
 
-function onChange(date, dateString) {
-    console.log(date, dateString);
-}
+// function onChange(date, dateString) {
+//     console.log(date, dateString);
+// }
 
 const oldCertificate = props => {
     const formItemLayout = {
@@ -46,7 +46,7 @@ const oldCertificate = props => {
         const field = type === 'text' ? e.target.name : type
         setCertData({
             ...certData,
-            [field]: type == 'text' ? e.target.value : e._d
+            [field]: type === 'text' ? e.target.value : e._d
         })
     };
     const updateNestedFieldHandler = (e) => {
@@ -71,6 +71,7 @@ const oldCertificate = props => {
         console.log(certData);
         props.form.validateFields((err, fieldsValue) => {
             if (err) {
+                console.log(fieldsValue);
                 return;
             }
         });

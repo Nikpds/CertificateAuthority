@@ -14,6 +14,10 @@ namespace MIS.CA.Util
             {
                 return false;
             }
+            if (String.IsNullOrEmpty(certificate.Certificate))
+            {
+                return false;
+            }
             if (String.IsNullOrEmpty(certificate.Owner))
             {
                 return false;

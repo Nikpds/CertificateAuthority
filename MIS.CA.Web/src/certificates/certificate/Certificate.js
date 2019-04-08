@@ -16,12 +16,10 @@ const Certificate = props => {
         duration: 1,
         request: null
     });
-    useEffect(() => {
-        console.log('This is Cert useEffect');
+    useEffect(() => {       
     }, [cert]);
 
-    useEffect(() => {
-        console.log('This is Step useEffect');
+    useEffect(() => {       
     }, [step]);
 
     const nextStepHandler = (step, data, name) => {
@@ -40,7 +38,6 @@ const Certificate = props => {
         var d = new Date();
         var year = d.getFullYear();
         const expires = new Date(year + years, d.getMonth(), d.getDate());
-        console.log(expires);
         setCert({
             ...cert,
             expires: expires,
