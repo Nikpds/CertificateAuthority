@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using MIS.CA.Implementation;
+using MIS.CA.Models;
+using MIS.CA.Repositories;
 using MIS.CA.Services;
-using MongoDB.Driver;
 
 namespace MIS.CA
 {
@@ -27,11 +21,12 @@ namespace MIS.CA
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureDB(services);
-
             services.AddScoped<ISshService, SshService>();
             services.AddScoped<IFtpService, FtpService>();
-            services.AddScoped<CertificateRepository, CertificateRepository>();
+            services.AddSingleton((ctx) => {
+                var connectionString = Configuration.GetConnectionString("DefaultConnection");
+                return new DataContext(connectionString);
+            });
             services.AddScoped<CertificateService, CertificateService>();
 
             services.AddCors();
@@ -46,20 +41,10 @@ namespace MIS.CA
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(builder => builder.AllowAnyHeader().WithOrigins("*").AllowAnyMethod().AllowCredentials());
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseMvc();
         }
 
-        private void ConfigureDB(IServiceCollection services)
-        {
-            string connectionString = Configuration.GetValue<string>("Db:ConnectionString");
-            var client = new MongoClient(connectionString);
-
-            string dbName = Configuration.GetValue<string>("Db:DbName");
-            IMongoDatabase db = client.GetDatabase(dbName);
-
-            services.Add(new ServiceDescriptor(typeof(IMongoDatabase), db));
-        }
     }
 }

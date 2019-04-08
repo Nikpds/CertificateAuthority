@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.NodeServices;
+using MIS.CA.Models.Views;
+using MIS.CA.Services;
+using Renci.SshNet;
 
 namespace MIS.CA.Controllers
 {
@@ -13,77 +12,87 @@ namespace MIS.CA.Controllers
     [ApiController]
     public class MainController : ControllerBase
     {
-        public MainController()
-        {
 
+        private ISshService _isshService;
+        private IFtpService _iftpService;
+
+        public MainController(ISshService isshService, IFtpService iftpService)
+        {
+            this._isshService = isshService;
+            this._iftpService = iftpService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetKeyAsync()
+        [HttpPost("{filename}")]
+        public IActionResult DownloadFile(string filename, [FromBody] Folder folder)
         {
-            
-            var file = "ca.cert.pem";
-            var url = "ftp://" + "192.168.1.20/" + file;
-            Uri serverUri = new Uri(url);
-            if (serverUri.Scheme != Uri.UriSchemeFtp)
-            {
-                return BadRequest();
-            }
-            // Get the object used to communicate with the server.
-            WebClient request = new WebClient();
-            // This example assumes the FTP site uses anonymous logon.
-            request.Credentials = new NetworkCredential("geakmh", "geakmh");
+
+
             try
             {
-                byte[] newFileData = request.DownloadData(serverUri.ToString());
-                string fileString = System.Text.Encoding.UTF8.GetString(newFileData);
-                Debug.WriteLine("----------------------> " + fileString);
+                string host = "192.168.1.71";
+                string username = "root";
+                string password = "123456";
+                string localFileName = Path.GetFileName(@"C:\MyData");
+                string path = @"c:\temp\MyTest.txt";
+                using (var sftp = new SftpClient(host, username, password))
+                {
+                    sftp.Connect();
 
+                    var directory = sftp.ListDirectory("/root");
+                    using (var file = System.IO.File.OpenWrite(path))
+                    {
+                        sftp.BeginDownloadFile("/root/temp.txt", file);
+                    }
 
-                return File(newFileData, "application/pdf", file);
-
+                    sftp.Disconnect();
+                }
+                return Ok();
             }
-            catch (WebException e)
+            catch (Exception ex)
             {
-                String status = ((FtpWebResponse)e.Response).StatusDescription;
-                Debug.WriteLine("ERROR STATUS ------ > " + status);
+
+                return BadRequest("Server Error while downloading file. Error :" + ex.Message);
             }
-            return Ok();
-            //var path = @"C:\Users\Nperperidis\Downloads\Φασολάδα.docx";
-            //var memory = new MemoryStream();
-            //using (var stream = new FileStream(path, FileMode.Open))
-            //{
-            //    await stream.CopyToAsync(memory);
-            //}
-            //memory.Position = 0;
-            //return File(memory, GetContentType(path), Path.GetFileName(path));
+
 
         }
 
-        private string GetContentType(string path)
+        [HttpGet("ls/{directory}")]
+        public IActionResult ListDirectory(string directory)
         {
-            var types = GetMimeTypes();
-            var ext = Path.GetExtension(path).ToLowerInvariant();
-            return types[ext];
+
+            if (string.IsNullOrEmpty(directory))
+            {
+                return BadRequest("Directory is mandatory");
+            }
+            try
+            {
+                IEnumerable<string> files = _isshService.ListDirectory(directory);
+                return Ok(files);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error while listing directory.Error :" + ex.Message);
+            }
         }
 
-        private Dictionary<string, string> GetMimeTypes()
+        [HttpDelete("{filename}")]
+        public IActionResult DeleteFile(string filename)
         {
-            return new Dictionary<string, string>
+
+            if (string.IsNullOrEmpty(filename))
             {
-                {".txt", "text/plain"},
-                {".pem", "text/plain"},
-                {".pdf", "application/pdf"},
-                {".doc", "application/vnd.ms-word"},
-                {".docx", "application/vnd.ms-word"},
-                {".xls", "application/vnd.ms-excel"},
-                {".xlsx", "application/vnd.openxmlformats officedocument.spreadsheetml.sheet"},
-                {".png", "image/png"},
-                {".jpg", "image/jpeg"},
-                {".jpeg", "image/jpeg"},
-                {".gif", "image/gif"},
-                {".csv", "text/csv"}
-            };
+                return BadRequest("Filename is mandatory");
+            }
+            try
+            {
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error while listing directory.Error :" + ex.Message);
+            }
         }
     }
 }

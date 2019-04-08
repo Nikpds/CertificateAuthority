@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MIS.CA.Implementation;
 using MIS.CA.Models;
 using MIS.CA.Services;
 
@@ -19,24 +18,40 @@ namespace MIS.CA.Controllers
         {
             this._certificateService = certificateService;
         }
-  
+
         [HttpGet]
-        public IEnumerable<Certificate> Get()
+        public async Task<IActionResult> Get()
         {
-            return _certificateService.GetAllCertificates();
+            IEnumerable<CertificateRequest> certificates = await _certificateService.GetAllCertificates();
+            return Ok(certificates);
         }
-        
+
         [HttpGet("{id}")]
-        public Certificate GetById(string id)
+        public async Task<IActionResult> GetById(string id)
         {
-            return _certificateService.GetCertificateById(id);
+            try
+            {
+                CertificateRequest certificate = await _certificateService.GetCertificateById(id);
+                return Ok(certificate);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
-        
+
         [HttpPost]
-        public ActionResult Create([FromBody] Certificate certificate)
+        public async Task<IActionResult> Insert([FromBody] CertificateRequest certificate)
         {
-            Certificate createdCertificate = _certificateService.CreateCertificate(certificate);
-            return CreatedAtAction(nameof(GetById), new { id = createdCertificate.Id }, createdCertificate);
+            try
+            {
+                CertificateRequest createdCertificate = await _certificateService.CreateCertificate(certificate);
+                return CreatedAtAction(nameof(GetById), new { id = createdCertificate.Id }, createdCertificate);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
     }
 }

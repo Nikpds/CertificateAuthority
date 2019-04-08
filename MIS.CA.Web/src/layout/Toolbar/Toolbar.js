@@ -13,10 +13,20 @@ const Toolbar = props => {
                     <NavLink to="/" className={classes.Menu_Item}><Icon type="home" />Αρχική</NavLink>
                 </Menu.Item>
                 <Menu.Item key="2" className={classes.Menu_Item_hover}>
+                    <NavLink to="/cert/files" className={classes.Menu_Item}><Icon type="safety-certificate" />Πιστοπιοητικά</NavLink>
+                </Menu.Item>
+                <Menu.Item key="3" className={classes.Menu_Item_hover}>
+                    <NavLink to="/cert/files" className={classes.Menu_Item}><Icon type="folder" />Φάκελοι-Αρχεία</NavLink>
+                </Menu.Item>
+                <Menu.Item key="4" className={classes.Menu_Item_hover}>
                     <NavLink to="/certificate/new" className={classes.Menu_Item}>
                         <Icon type="plus" />Νέο Πιστοπιοητικό</NavLink>
                 </Menu.Item>
-                <Menu.Item key="3" className={[classes.Right, classes.Menu_Item].join(' ')} onClick={auth.signOut}>
+                <Menu.Item key="5" className={classes.Menu_Item_hover}>
+                    <NavLink to="/certificate/issued" className={classes.Menu_Item}>
+                        <Icon type="safety-certificate" />Καταγραφή Παλιών Πιστοποιητικών</NavLink>
+                </Menu.Item>
+                <Menu.Item key="6" className={[classes.Right, classes.Menu_Item].join(' ')} onClick={auth.signOut}>
                     <Icon type="logout" />Αποσύνδεση
                 </Menu.Item>
             </Menu>

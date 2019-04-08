@@ -1,9 +1,8 @@
-﻿using MIS.CA.Implementation;
-using MIS.CA.Models;
+﻿using MIS.CA.Models;
+using MIS.CA.Repositories;
 using MIS.CA.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MIS.CA.Services
@@ -11,25 +10,25 @@ namespace MIS.CA.Services
     public class CertificateService
     {
 
-        private readonly CertificateRepository _certificateRepository;
+        private readonly DataContext _dataCtx;
 
-        public CertificateService(CertificateRepository certificateRepository)
+        public CertificateService(DataContext dataCtx)
         {
-            this._certificateRepository = certificateRepository;
+            this._dataCtx = dataCtx;
         }
 
-        public IEnumerable<Certificate> GetAllCertificates()
+        public async Task<IEnumerable<CertificateRequest>> GetAllCertificates()
         {
-            return _certificateRepository.GetAll();
+            return await _dataCtx.Certificates.GetAll();
         }
 
-        public Certificate GetCertificateById(string certificateId)
+        public async Task<CertificateRequest> GetCertificateById(string certificateId)
         {
             if (String.IsNullOrEmpty(certificateId))
             {
                 throw new Exception("Id cannot be null or empty");
             }
-            Certificate certificate = _certificateRepository.GetById(certificateId);
+            CertificateRequest certificate = await _dataCtx.Certificates.GetById(certificateId);
             if (String.IsNullOrEmpty(certificateId))
             {
                 throw new Exception("Certificate was not found");
@@ -37,16 +36,15 @@ namespace MIS.CA.Services
             return certificate;
         }
 
-        public Certificate CreateCertificate(Certificate incomingCertificate)
+        public async Task<CertificateRequest> CreateCertificate(CertificateRequest incomingCertificate)
         {
             bool isValid = incomingCertificate.IsValid();
             if (!isValid)
             {
                 throw new Exception("Object is not valid");
             }
-            incomingCertificate.Id = null;
 
-            return _certificateRepository.Insert(incomingCertificate);
+            return await _dataCtx.Certificates.Insert(incomingCertificate);
         }
     }
 }

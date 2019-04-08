@@ -8,13 +8,13 @@ namespace MIS.CA.Util
 {
     public static class Validators
     {
-        public static bool IsValid(this Certificate certificate)
+        public static bool IsValid(this CertificateRequest certificate)
         {
-            if (String.IsNullOrEmpty(certificate.Name))
+            if (String.IsNullOrEmpty(certificate.PrivateKey))
             {
                 return false;
             }
-            if (String.IsNullOrEmpty(certificate.Apps))
+            if (String.IsNullOrEmpty(certificate.Owner))
             {
                 return false;
             }
