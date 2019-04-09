@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
+using MIS.CA.Models;
 using MIS.CA.Models.Views;
 using MIS.CA.Services;
 using Renci.SshNet;
@@ -92,6 +93,20 @@ namespace MIS.CA.Controllers
             catch (Exception ex)
             {
                 return BadRequest("Error while listing directory.Error :" + ex.Message);
+            }
+        }
+
+        [HttpPost("crt/request")]
+        public IActionResult CreateCertificate([FromBody] CertificateRequest request)
+        {
+            try
+            {
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

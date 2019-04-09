@@ -22,7 +22,11 @@ const Toolbar = props => {
                     <NavLink to="/certificate/new" className={classes.Menu_Item}>
                         <Icon type="plus" />Νέο Πιστοποιητικό</NavLink>
                 </Menu.Item>
-                <Menu.Item key="5" className={[classes.Right, classes.Menu_Item].join(' ')} onClick={auth.signOut}>
+                <Menu.Item key="5" className={classes.Menu_Item_hover}>
+                    <NavLink to="/certificate/issued" className={classes.Menu_Item}>
+                        <Icon type="safety-certificate" />Καταγραφή Παλιών Πιστοποιητικών</NavLink>
+                </Menu.Item>
+                <Menu.Item key="6" className={[classes.Right, classes.Menu_Item].join(' ')} onClick={auth.signOut}>
                     <Icon type="logout" />Αποσύνδεση
                 </Menu.Item>
             </Menu>

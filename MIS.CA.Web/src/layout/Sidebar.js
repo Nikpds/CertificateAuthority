@@ -35,7 +35,6 @@ const Sidebar = () => {
                     <NavLink to="/certificate/new" >
                         <Icon type="plus" /><span>Νέο Πιστοποιητικό</span></NavLink>
                 </Menu.Item>
-
             </Menu>
         </Sider>
             );

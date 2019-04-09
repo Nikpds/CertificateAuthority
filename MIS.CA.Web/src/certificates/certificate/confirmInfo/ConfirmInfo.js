@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import { Form, Icon, Typography, Button } from 'antd';
 import './ConfirmInfo.sass';
+import { Post as post } from '../../../services/Utility';
 const { Title, Paragraph, Text } = Typography;
 
 const confirm = props => {
@@ -24,8 +25,15 @@ const confirm = props => {
                 [name]: e
             })
         }
-
     }
+
+    const submitCertHandler = () => {
+        post('cert/request', crt).then(res => {
+            console.log('all good');
+            props.next(4);
+        });
+    }
+
     const d = new Date(crt.expires)
     const expiredDate = d.getDate() + '-' + d.getMonth() + '-' + d.getFullYear();
     return (
@@ -93,7 +101,7 @@ const confirm = props => {
                             onClick={() => { history.push('/') }} >
                             Cancel
                     </Button>
-                        <Button type="primary" onClick={() => props.next(4)}>
+                        <Button type="primary" onClick={submitCertHandler}>
                             Create Certificates
                     <Icon type="step-forward" />
                         </Button>

@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { } from 'react';
 import { } from 'antd';
 import { Typography, Row, Col, Icon } from 'antd';
+import { useFetch } from '../services/UseFetch';
 const { Title, Paragraph } = Typography;
+
+
 const Home = () => {
+
+  const checkFetch = () => {
+    const tempdata = useFetch('https://jsonplaceholder.typicode.com/albums');
+    console.log(tempdata);
+  };
+  
+  checkFetch();
+
+
+
+
+
   return (
     <Row style={{ paddingTop: 40 }}>
       <Col span={18} offset={3}>
         <Title level={2}>
-          <Icon type="check-circle" theme="twoTone" twoToneColor="#599956" style={{ fontSize: 25,marginRight: 10 }} />
+          <Icon type="check-circle" theme="twoTone" twoToneColor="#599956" style={{ fontSize: 25, marginRight: 10 }} />
           OpenSSL Essentials: Working with SSL Certificates, Private Keys and CSRs
          </Title>
         <Paragraph>OpenSSL is a versatile command line tool that can be used for a large variety
