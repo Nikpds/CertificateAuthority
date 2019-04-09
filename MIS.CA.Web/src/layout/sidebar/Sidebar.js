@@ -22,8 +22,8 @@ const Sidebar = () => {
                     <span>Close</span>
                 </Menu.Item>
                 <Menu.Item key="1">
-                    <NavLink to="/cert/files" >
-                        <Icon type="safety-certificate" />   <span>Πιστοπιοητικά</span>
+                    <NavLink to="/cert/certificates" >
+                        <Icon type="safety-certificate" /><span>Πιστοποιητικά</span>
                     </NavLink>
                 </Menu.Item>
                 <Menu.Item key="2">
@@ -33,7 +33,7 @@ const Sidebar = () => {
                 </Menu.Item>
                 <Menu.Item key="3">
                     <NavLink to="/certificate/new" >
-                        <Icon type="plus" /><span>Νέο Πιστοπιοητικό</span></NavLink>
+                        <Icon type="plus" /><span>Νέο Πιστοποιητικό</span></NavLink>
                 </Menu.Item>
 
             </Menu>

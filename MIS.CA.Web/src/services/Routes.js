@@ -4,12 +4,14 @@ import Login from '../auth/Login/Login';
 import Home from '../layout/Home';
 import Certificate from '../certificates/certificate/Certificate';
 import FileManager from '../components/filemanager/FileManager';
+import ListCertificates from '../certificates/certificate/list-certificates/ListCertificates';
 
 export const fullAccess = (
     <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/certificate/new" exact component={Certificate} />
         <Route path="/cert/files" exact component={FileManager} />
+        <Route path="/cert/certificates" exact component={ListCertificates} />
         <Redirect to="/" />
     </Switch>
 );
