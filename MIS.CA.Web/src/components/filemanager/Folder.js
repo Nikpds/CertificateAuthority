@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Skeleton, Icon, Badge, Input, Popconfirm, message } from 'antd';
-import { Get, Post, Delete, baseurl } from '../../services/Utility';
+import { Get, Delete, baseurl } from '../../services/Utility';
 
 const Folder = (props) => {
     const [files, setFiles] = useState([]);
@@ -37,7 +37,7 @@ const Folder = (props) => {
         Delete('main/' + props.path + '/' + file)
         .then(resp => {
             if (resp.ok) {
-                message.info('The file deleted successfully');
+                message.info('Το αρχείο διαγράφτηκε επιτυχώς');
                 let filesCopy = [...files];
                 const index = filesCopy.findIndex((f) => file === f);
                 filesCopy.splice(index, 1);
@@ -81,10 +81,10 @@ const Folder = (props) => {
             </div>}
             renderItem={(item) => (
                 <List.Item actions={[
-                    <Popconfirm title="Are you sure delete this file?" onConfirm={() => { deleteFile(item) }} okText="Yes" cancelText="No">
-                        <span className="Link" title="Delete key"><Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" /></span>,
+                    <Popconfirm title="Είστε σίγουρος για την διαγραφή αρχείου?" onConfirm={() => { deleteFile(item) }} okText="Yes" cancelText="No">
+                        <span className="Link" title="Διαγραφή"><Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" /></span>,
                     </Popconfirm>,
-                    <a className="Link" href={baseurl +'main/' + props.path + '/' + item} title="Download file"><Icon type="download" /></a>]}>
+                    <a className="Link" href={baseurl +'main/' + props.path + '/' + item} title="Κατέβασμα"><Icon type="download" /></a>]}>
                     <Skeleton avatar title={false} loading={false} >
                         <List.Item.Meta title={item} />
                     </Skeleton>

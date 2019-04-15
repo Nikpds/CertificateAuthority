@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { Form, Icon, Input, Button, Row, Col } from 'antd';
-import utcss from '../../styles/utilities.module.sass';
+import { Form, Icon, Button, Typography as T } from 'antd';
 import { AuthContext } from '../../context/AuthContext';
-
+import './Login.css';
 const Login = props => {
     const auth = useContext(AuthContext)
     const [username, setUsername] = useState('');
@@ -13,50 +12,34 @@ const Login = props => {
     const passwordHandler = (e) => {
         setPassword(e.target.value);
     }
-    const clearUsernameHandler = () => {
-        setUsername('');
-    }
-    const formItemLayout = {
-        labelCol: { span: 24 },
-        wrapperCol: { span: 24 },
-    };
-
     const loginHandler = () => {
         auth.signIn(username, password);
     }
-
-    const clearButton = username ? <Icon type="close-circle" onClick={clearUsernameHandler} /> : null;
-
     return (
-        <Row className={utcss.IsFullheight} type="flex" justify="space-around" align="middle">
-            <Col span={6} value={50}>
-                <Form >
-                    <Form.Item
-                        label="Όνομα Χρήστη"
-                        {...formItemLayout}>
-                        <Input
-                            placeholder="Enter your username"
-                            autoComplete="username"
-                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                            suffix={clearButton}
-                            value={username}
-                            onChange={usernameHandler} />
-                    </Form.Item>
-                    <Form.Item
-                        label="Κωδικός"
-                        {...formItemLayout}>
-                        <Input.Password
-                            autoComplete="password"
-                            value={password}
-                            onChange={passwordHandler}
-                            placeholder="input password" />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" onClick={loginHandler}> Check</Button>
-                    </Form.Item>
-                </Form>
-            </Col>
-        </Row>
+        <Form className="login-container">
+            <div className="login-card">
+                <div className="login-card-content">
+                    <div className="header">
+                        <T.Title level={1}> <Icon type="safety-certificate" style={{ fontSize: 50, marginRight: 10 }}
+                            theme="twoTone" twoToneColor="#711411" />
+                            <span style={{ color: 'red' }}>Open</span><span style={{ color: 'white' }}>SSL</span></T.Title>
+                    </div>
+                    <div className="form">
+                        <div className="form-field username">
+                            <div className="icon">  <Icon type="user" /> </div>
+                            <input type="text" name="username" autoComplete="username"
+                                value={username} onChange={usernameHandler} placeholder="Username" />
+                        </div>
+                        <div className="form-field password">
+                            <div className="icon"> <Icon type="lock" /></div>
+                            <input type="password" placeholder="Password" autoComplete="password"
+                                value={password} onChange={passwordHandler} />
+                        </div>
+                        <Button type="submit" block shape="round" ghost onClick={loginHandler}> Σύνδεση </Button>
+                    </div>
+                </div>
+            </div>
+        </Form>
     );
 };
 

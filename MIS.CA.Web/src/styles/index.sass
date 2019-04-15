@@ -10,10 +10,17 @@ body,html, .idDiv
     border-bottom: 2px solid $warning-color!important
 
 .Section
-    padding: 40px 20px 20px 10px
+    padding: 20px!important
 .Link
     color: #1890ff!important
     cursor: pointer
 .Link:hover
     color: darken(#1890ff,10%)!important
-    
+
+.ant-menu-dark, .ant-menu-dark .ant-menu-sub
+    background: #711411!important
+.ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected
+    background-color: #00000057!important
+
+.ant-menu-dark .ant-menu-item:hover
+    background-color: #00000057!important

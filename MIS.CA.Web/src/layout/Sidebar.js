@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 const { Sider } = Layout;
 
 const Sidebar = () => {
-    const [collapsed, setCollapsed] = useState(true)
+    const [collapsed, setCollapsed] = useState(false)
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
@@ -19,7 +19,7 @@ const Sidebar = () => {
                 style={{ height: '100%' }} >
                 <Menu.Item key="0" onClick={toggleCollapsed}>
                     <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
-                    <span>Close</span>
+                    <span>Ελαχιστοποίηση</span>
                 </Menu.Item>
                 <Menu.Item key="1">
                     <NavLink to="/cert/certificates" >
@@ -34,6 +34,10 @@ const Sidebar = () => {
                 <Menu.Item key="3">
                     <NavLink to="/certificate/new" >
                         <Icon type="plus" /><span>Νέο Πιστοποιητικό</span></NavLink>
+                </Menu.Item>
+                <Menu.Item key="4">
+                    <NavLink to="/certificate/issued" >
+                        <Icon type="safety-certificate" /><span>Εισαγωγή</span></NavLink>
                 </Menu.Item>
             </Menu>
         </Sider>

@@ -17,7 +17,7 @@ const Layout = props => {
             <LayoutC>
                 {toolbar}
             </LayoutC>
-            <LayoutC className={utcss.IsFullheight}>
+            <LayoutC className={cssHeight}>
                 {sidebar}
                 <Content className={cssHeight}>
                     {props.children}

@@ -68,10 +68,10 @@ const Certificate = props => {
     }
     return (
         <Row className={css.Row}>
-            <Col span={12} offset={3}>
+            <Col span={12} offset={1}>
                 {stepComponent}
             </Col>
-            <Col span={6} offset={3}>
+            <Col span={8} offset={3}>
                 <Steps step={step} />
             </Col>
         </Row>

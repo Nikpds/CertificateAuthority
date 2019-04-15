@@ -1,47 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Typography, Table, Icon, Divider, notification, Button, Popconfirm } from 'antd';
 import moment from 'moment';
-// import { Get, Post } from '../../services/Utility';
 
 const { Text, Title } = Typography
 const columns = [{
-        title: 'Title',
-        dataIndex: 'title',
-        sorter: true,
-        width: '20%',
-    }, {
-        title: 'Issuer',
-        dataIndex: 'issuer',
-        sorter: true,
-        width: '20%',
-    }, {
-        title: 'Date Issued',
-        dataIndex: 'created_at',
-        sorter: true,
-        width: '20%',
-    }, {
-        title: 'Expiry Date',
-        dataIndex: 'expiry_date',
-        sorter: true,
-        width: '20%',
-        render: (date, cert) => (
-            <span>
-                {date} {Expires(date)}
-            </span>
-        ),
-    }, {
-        title: 'Action',
-        width: '20%',
-        render: (text, cert) => (
-            <span>
-                <Button type="primary" icon="download" onClick={() => { DownloadCert(cert._id) }}></Button>
-                <Divider type="vertical" />
+    title: 'Title',
+    dataIndex: 'title',
+    sorter: true,
+    width: '20%',
+}, {
+    title: 'Issuer',
+    dataIndex: 'issuer',
+    sorter: true,
+    width: '20%',
+}, {
+    title: 'Date Issued',
+    dataIndex: 'created_at',
+    sorter: true,
+    width: '20%',
+}, {
+    title: 'Expiry Date',
+    dataIndex: 'expiry_date',
+    sorter: true,
+    width: '20%',
+    render: (date, cert) => (
+        <span>
+            {date} {Expires(date)}
+        </span>
+    ),
+}, {
+    title: 'Action',
+    width: '20%',
+    render: (text, cert) => (
+        <span>
+            <Button type="primary" icon="download" onClick={() => { DownloadCert(cert._id) }}></Button>
+            <Divider type="vertical" />
 
-                <Popconfirm title="Are you sure?" okText="Yes" cancelText="No" onConfirm={() => { DeleteCert(cert._id) }}>
-                    <Button type="danger" icon="delete"></Button>
-                </Popconfirm>
-            </span>
-        )
+            <Popconfirm title="Are you sure?" okText="Yes" cancelText="No" onConfirm={() => { DeleteCert(cert._id) }}>
+                <Button type="danger" icon="delete"></Button>
+            </Popconfirm>
+        </span>
+    )
 }];
 
 // Show icon if certificate expires soon
@@ -56,9 +55,7 @@ const Expires = (date) => {
 
     } else if (diffDays >= 0 && diffDays <= 30) {
         return (<Icon type="clock-circle" className="ant-typography-warning" />);
-
     }
-
     return null;
 }
 
@@ -128,8 +125,6 @@ const ListCertificates = () => {
             ...pagination,
             loading: true
         });
-        
-
         setCert([
             {
                 _id: "1919199190",
@@ -169,18 +164,14 @@ const ListCertificates = () => {
 
     return (
         <React.Fragment>
-
-            {/* Page Title */}
-            <Row style={{ paddingTop: 40 }}>
-                <Col span={18} offset={3}>
-                    <Title level={2}><Icon style={{ fontSize: 25 }} type="file-protect" /> All certificates</Title>
-                    <Text>A list of all the certificates and their associated information</Text>
+            <Row className="Section">
+                <Col span={22} offset={1}>
+                    <Title level={2}><Icon style={{ fontSize: 25 }} type="file-protect" /> Εκδομένα Πιστοποιητικά</Title>
+                    <Text>Προβολή πιστοποιητικών με λεπτομέριες και φίλτρα για αναζήτηση</Text>
                 </Col>
             </Row>
-
-            {/* List of certificates */}
-            <Row style={{ paddingTop: 40 }}>
-                <Col span={18} offset={3}>
+            <Row >
+                <Col span={22} offset={1}>
                     <Table
                         columns={columns}
                         rowKey={cert => cert._id}
