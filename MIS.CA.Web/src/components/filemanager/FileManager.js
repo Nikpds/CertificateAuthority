@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Typography } from 'antd';
-import PrivateKey from './PrivateFolder';
-import CertFiles from './CertFiles';
-import CrtRequest from './CrtRequests';
+import Folder from './Folder';
+import './FileManager.sass';
+
 const { Text, Title } = Typography
 const FileManager = () => {
 
@@ -15,9 +15,9 @@ const FileManager = () => {
                 </Col>
             </Row>
             <Row type="flex" justify="space-around">
-                <Col span={5}>{<PrivateKey />}</Col>
-                <Col span={5}>{<CertFiles />}</Col>
-                <Col span={5}>{<CrtRequest />}</Col>
+                <Col span={5}>{<Folder path="private"/>}</Col>
+                <Col span={5}>{<Folder path="certs"/>}</Col>
+                <Col span={5}>{<Folder path="csr"/>}</Col>
             </Row>
         </React.Fragment>
     );

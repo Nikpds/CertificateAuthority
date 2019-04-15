@@ -1,4 +1,4 @@
-const baseurl = "http://localhost:61489/api/"
+export const baseurl = "http://localhost:53400/api/";
 export const Get = async (address) => {
     return fetch(baseurl + address, {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -21,4 +21,10 @@ export const Post = async (address, data) => {
         console.log(token);
     }).catch(error => console.error('Error:', error))
         ; // parses JSON response into native Javascript objects 
+}
+
+export const Delete = async (address) => {
+    return fetch(baseurl + address, {
+        method: "DELETE"
+    });
 }

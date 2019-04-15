@@ -12,7 +12,7 @@ namespace MIS.CA.Models
         public string Locality { get; set; }
         public string Organization { get; set; }
         public string Unit { get; set; }
-        public string Common { get; set; }
+        public string Cn { get; set; }
         public string Email { get; set; }
     }
 }

@@ -15,17 +15,13 @@ namespace MIS.CA.Models {
 
         public CertificateDetails Request { get; set; }
 
+        [BsonIgnore]
         public int Duration { get; set; }
 
         public string Owner { get; set; }
 
         public string Unit { get; set; }
 
-     
-
-       
-
-       
-
+        public bool AlreadyCreated { get; set; }
     }
 }

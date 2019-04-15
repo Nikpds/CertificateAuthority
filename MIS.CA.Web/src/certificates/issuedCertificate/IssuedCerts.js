@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Form, Icon, Input, Button, Typography, DatePicker, Row, Col } from 'antd';
+import { Form, Icon, Input, Button, Typography, DatePicker, Row, Col, message } from 'antd';
 import classes from './IssuedCerts.sass';
+import {Post} from '../../services/Utility';
 
 const { Title } = Typography;
 
@@ -74,6 +75,12 @@ const oldCertificate = props => {
                 console.log(fieldsValue);
                 return;
             }
+            Post('certificates/', certData).then((cert) => {
+                message.info('Το πιστοποιητικό καταγράφηκε!');
+            }, (error) => {
+                console.log(error);
+                message.error('Σφάλμα κατά την καταγραφή του πιστοποιητικού!');
+            });
         });
     };
 

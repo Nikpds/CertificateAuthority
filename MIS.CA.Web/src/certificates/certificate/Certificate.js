@@ -61,7 +61,7 @@ const Certificate = props => {
             stepComponent = <Confirm next={finalStep} cert={cert} />;
             break;
         case 4:
-            stepComponent = <DownloadFiles next={finalStep} />;
+            stepComponent = <DownloadFiles next={finalStep} cert={cert} />;
             break;
         default:
             break;
@@ -72,7 +72,7 @@ const Certificate = props => {
                 {stepComponent}
             </Col>
             <Col span={6} offset={3}>
-                <Steps step={cert.step} />
+                <Steps step={step} />
             </Col>
         </Row>
     );

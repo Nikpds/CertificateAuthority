@@ -28,9 +28,15 @@ const confirm = props => {
     }
 
     const submitCertHandler = () => {
-        post('cert/request', crt).then(res => {
-            console.log('all good');
+        let crtCopy = {...crt};
+        delete crtCopy.expires;
+        console.log("The following object will be posted ", crtCopy);
+        post('main/generate', crtCopy)
+        .then(() => {
             props.next(4);
+        }, (error) => {
+            console.log(error);
+            alert('Error creating certificate');
         });
     }
 

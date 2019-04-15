@@ -47,6 +47,10 @@ const Request = props => {
                     <Input type="text" placeholder="" name="organization"
                         value={req.organization} onChange={inputeHandler} />
                 </Form.Item>
+                <Form.Item label="Organization Unit (eg, IT)">
+                    <Input type="text" placeholder="" name="unit"
+                        value={req.unit} onChange={inputeHandler} />
+                </Form.Item>
                 <Form.Item label="Common Name (e.g. server FQDN or YOUR name)">
                     <Input type="text" placeholder="" name="cn"
                         value={req.cn} onChange={inputeHandler} />

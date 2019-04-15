@@ -21,8 +21,19 @@ namespace MIS.CA
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ISshService, SshService>();
-            services.AddScoped<IFtpService, FtpService>();
+            var serverIp = Configuration.GetValue<string>("Ssh:ServerIp");
+            var username = Configuration.GetValue<string>("Ssh:Username");
+            var password = Configuration.GetValue<string>("Ssh:Password");
+
+            services.AddScoped<ISshService, SshService>((ctx) => {
+                var capass = Configuration.GetValue<string>("OpenSSL:Capass");
+                return new SshService(serverIp, username, password, capass);
+            });
+
+            services.AddScoped<ISftpService, SftpService>((ctx) => {
+                return new SftpService(serverIp, username, password);
+            });
+
             services.AddSingleton((ctx) => {
                 var connectionString = Configuration.GetConnectionString("DefaultConnection");
                 return new DataContext(connectionString);
@@ -30,7 +41,11 @@ namespace MIS.CA
             services.AddScoped<CertificateService, CertificateService>();
 
             services.AddCors();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.DateFormatString = "dd/MM/yyyy HH:mm";
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,10 +11,12 @@ namespace MIS.CA.Services
     {
 
         private readonly DataContext _dataCtx;
+        private readonly ISshService _sshService;
 
-        public CertificateService(DataContext dataCtx)
+        public CertificateService(DataContext dataCtx, ISshService sshService)
         {
             this._dataCtx = dataCtx;
+            this._sshService = sshService;
         }
 
         public async Task<IEnumerable<CertificateRequest>> GetAllCertificates()
@@ -36,13 +38,30 @@ namespace MIS.CA.Services
             return certificate;
         }
 
-        public async Task<CertificateRequest> CreateCertificate(CertificateRequest incomingCertificate)
+        public async Task<CertificateRequest> CreateExistingCertificate(CertificateRequest incomingCertificate)
         {
             bool isValid = incomingCertificate.IsValid();
             if (!isValid)
             {
                 throw new Exception("Object is not valid");
             }
+            incomingCertificate.AlreadyCreated = false;
+
+            return await _dataCtx.Certificates.Insert(incomingCertificate);
+        }
+
+        public async Task<CertificateRequest> GenerateCertificate(CertificateRequest incomingCertificate)
+        {
+            bool isValid = incomingCertificate.IsValidForGeneration();
+            if (!isValid)
+            {
+                throw new Exception("Object is not valid");
+            }
+
+            _sshService.CreateCertificateAllCommands(incomingCertificate);
+
+            incomingCertificate.Expires = DateTime.Now.AddYears(incomingCertificate.Duration);
+            incomingCertificate.AlreadyCreated = true;
 
             return await _dataCtx.Certificates.Insert(incomingCertificate);
         }
