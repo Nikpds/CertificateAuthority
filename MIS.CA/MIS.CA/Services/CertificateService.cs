@@ -1,8 +1,10 @@
 ﻿using MIS.CA.Models;
 using MIS.CA.Repositories;
 using MIS.CA.Util;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MIS.CA.Services
@@ -19,8 +21,18 @@ namespace MIS.CA.Services
             this._sshService = sshService;
         }
 
+        public async Task<Page<CertificateRequest>> GetCertificateSorted(int page, int size, string sort)
+        {
+            SortDefinition<CertificateRequest> sortDefinition = CreateSortDefinition(sort);
+            IEnumerable<CertificateRequest> certificates = await _dataCtx.Certificates.GetPageSorted(FilterDefinition<CertificateRequest>.Empty, sortDefinition, page, size);
+            int total = await _dataCtx.Certificates.Count(FilterDefinition<CertificateRequest>.Empty);
+            return new Page<CertificateRequest>(page, size, total, certificates);
+        }
+
         public async Task<IEnumerable<CertificateRequest>> GetAllCertificates()
         {
+
+            Debug.WriteLine(Builders<CertificateRequest>.Sort.Ascending("antonis").Descending("antonis2"));
             return await _dataCtx.Certificates.GetAll();
         }
 
@@ -65,5 +77,50 @@ namespace MIS.CA.Services
 
             return await _dataCtx.Certificates.Insert(incomingCertificate);
         }
+
+        public async void DeleteCertificate(string id)
+        {
+
+            bool deleted = await _dataCtx.Certificates.Delete(id);
+            if (!deleted)
+            {
+                throw new Exception("The Certificate was not found");
+            }
+        }
+
+        private SortDefinition<CertificateRequest> CreateSortDefinition(string sort)
+        {
+            IList<SortDefinition<CertificateRequest>> sortDefinitions = new List<SortDefinition<CertificateRequest>>();
+            if (!String.IsNullOrEmpty(sort))
+            {
+                if (sort.Contains(" "))
+                {
+                    throw new Exception("Sort parameter can not contain whitespace characters");
+                }
+                string[] sorts = sort.Split(",");
+                foreach (string sortOption in sorts)
+                {
+                    string[] options = sortOption.Split(":");
+                    if (options.Length != 2)
+                    {
+                        throw new Exception("Sorting params must be alligned with the following format: [COLUMN:{asc|desc}[,]]*");
+                    }
+                    if (options[1].ToUpper() == "ASC")
+                    {
+                        sortDefinitions.Add(Builders<CertificateRequest>.Sort.Ascending(options[0]));
+                    }
+                    else if (options[1].ToUpper() == "DESC")
+                    {
+                        sortDefinitions.Add(Builders<CertificateRequest>.Sort.Descending(options[0]));
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid Sort Object");
+                    }
+                }
+            }
+            return Builders<CertificateRequest>.Sort.Combine(sortDefinitions);
+        }
+           
     }
 }

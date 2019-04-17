@@ -25,12 +25,12 @@ namespace MIS.CA
             var username = Configuration.GetValue<string>("Ssh:Username");
             var password = Configuration.GetValue<string>("Ssh:Password");
 
-            services.AddScoped<ISshService, SshService>((ctx) => {
+            services.AddSingleton<ISshService, SshService>((ctx) => {
                 var capass = Configuration.GetValue<string>("OpenSSL:Capass");
                 return new SshService(serverIp, username, password, capass);
             });
 
-            services.AddScoped<ISftpService, SftpService>((ctx) => {
+            services.AddSingleton<ISftpService, SftpService>((ctx) => {
                 return new SftpService(serverIp, username, password);
             });
 

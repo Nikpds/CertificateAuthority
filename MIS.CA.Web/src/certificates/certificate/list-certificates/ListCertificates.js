@@ -1,47 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Typography, Table, Icon, Divider, notification, Button, Popconfirm } from 'antd';
+import { Row, Col, Typography, Table, Icon, Divider, Button, Popconfirm, message} from 'antd';
 import moment from 'moment';
+import {Get, Delete, baseurl} from '../../../services/Utility';
 
 const { Text, Title } = Typography
-const columns = [{
-    title: 'Title',
-    dataIndex: 'title',
-    sorter: true,
-    width: '20%',
-}, {
-    title: 'Issuer',
-    dataIndex: 'issuer',
-    sorter: true,
-    width: '20%',
-}, {
-    title: 'Date Issued',
-    dataIndex: 'created_at',
-    sorter: true,
-    width: '20%',
-}, {
-    title: 'Expiry Date',
-    dataIndex: 'expiry_date',
-    sorter: true,
-    width: '20%',
-    render: (date, cert) => (
-        <span>
-            {date} {Expires(date)}
-        </span>
-    ),
-}, {
-    title: 'Action',
-    width: '20%',
-    render: (text, cert) => (
-        <span>
-            <Button type="primary" icon="download" onClick={() => { DownloadCert(cert._id) }}></Button>
-            <Divider type="vertical" />
 
-            <Popconfirm title="Are you sure?" okText="Yes" cancelText="No" onConfirm={() => { DeleteCert(cert._id) }}>
-                <Button type="danger" icon="delete"></Button>
-            </Popconfirm>
-        </span>
-    )
-}];
+
+const INITIAL_PAGE = 1;
+const INITIAL_PAGE_SIZE = 10;
+const PAGINATION = {
+    defaultCurrent: INITIAL_PAGE,
+    defaultPageSize: INITIAL_PAGE_SIZE,
+    showSizeChanger: true,
+    showTotal: (total, range) => 'Βλέπετε ' + range[0] + ' έως ' + range[1] + ' από τις ' + total + ' εγγραφές'
+};
+const lastPagination = {
+    page: null,
+    size: null,
+    sort: null
+};
 
 // Show icon if certificate expires soon
 const Expires = (date) => {
@@ -59,107 +36,115 @@ const Expires = (date) => {
     return null;
 }
 
-
-const DownloadCert = (certId) => {
-    // Get('download certificate' + certId).then(res => {
-    //     if (res) {
-    notification['success']({
-        message: 'The certificate was successfully downloaded.'
-        // description: error,
-    });
-    //     }
-    // }, error => {
-    //     notification['error']({
-    //         message: 'There was an error processing your request',
-    //         description: error,
-    //     });
-    // });
-}
-
-const DeleteCert = (certId) => {
-    // Get('delete certificate' + certId).then(res => {
-    //     if (res) {
-    notification['success']({
-        message: 'The certificate was successfully deleted.'
-        // description: error,
-    });
-    //     }
-    // }, error => {
-    //     notification['error']({
-    //         message: 'There was an error processing your request',
-    //         description: error,
-    //     });
-    // });
-}
-
 const ListCertificates = () => {
+
+    const columns = [{
+        title: 'Title',
+        dataIndex: 'certificate',
+        sorter: true,
+    }, 
+    {
+        title: 'Organization Name',
+        dataIndex: 'request.organization',
+        sorter: true,
+    },
+    {
+        title: 'Common Name',
+        dataIndex: 'request.cn',
+        sorter: true,
+    },
+    {
+        title: 'Date Issued',
+        dataIndex: 'created',
+        sorter: true,
+    }, 
+    {
+        title: 'Expiry Date',
+        dataIndex: 'expires',
+        sorter: true,
+        render: (date, cert) => (
+            <span>
+                {date} {Expires(date)}
+            </span>
+        ),
+    }, 
+    {
+        title: 'Action',
+        render: (text, cert) => (
+            <span>
+                <Button type="primary" icon="download" onClick={() => { DownloadCert(cert) }}></Button>
+                <Divider type="vertical" />
+                <Popconfirm title="Are you sure?" okText="Yes" cancelText="No" onConfirm={() => { DeleteCert(cert.id) }}>
+                    <Button type="danger" icon="delete"></Button>
+                </Popconfirm>
+            </span>
+        )
+    }];
+
     const [cert, setCert] = useState([]);
-    const [pagination, setPagination] = useState({
-        page: 1,
-        total: 0,
-        pageSize: 2,
-        loading: true
-    });
+    const [loading, setLoading] = useState(true);
+    const [total, setTotal] = useState(0);
 
     useEffect(() => {
-        getData();
+        getData(INITIAL_PAGE, INITIAL_PAGE_SIZE);
     }, []);
 
-    const handleTableChange = (pagination, filters, sorter) => {
-        console.log('pagination', pagination);
-        console.log('filters', filters);
-        console.log('sorter', sorter);
+    const DeleteCert = (certId) => {
+        setLoading(true);
+        Delete('certificates/' + certId)
+        .then(resp => {
+            
+            if (resp.ok) {
+                message.info('Το αρχείο διαγράφτηκε επιτυχώς');
+                const pageToLoad = lastPagination.page > 0 && cert.length === 1 ? lastPagination.page - 1 : lastPagination.page;
+                getData(pageToLoad, lastPagination.size, lastPagination.sort);
+            } else {
+                errorCallBack();
+            }
+        }, errorCallBack)
+        .catch(errorCallBack);
+    }
 
-        // @TODO Add pagination and sorter to state. Filters are not used in the table 
-        // setPagination({
-        //     ...pagination,
-        // });
+    const DownloadCert = (cert) => {
+        console.log(baseurl + 'main/certs/' + cert.certificate + '.crt');
+        window.location.href = baseurl + 'main/certs/' + cert.certificate + '.crt';
+    }
+
+    const handleTableChange = (pag, filters, sorter) => {
+        let sortField = '';
+        if (sorter && sorter.field) {
+            let subfields = sorter.field.split('.');
+            for (const subfield of subfields) {
+                sortField += (!sortField ? '' : '.') + subfield.substring(0, 1).toUpperCase() + subfield.substring(1);
+            }
+            sortField += ':' + sorter.order.replace('end', '');
+        }
+
+        getData(pag.current, pag.pageSize, sortField);
     };
 
+    const getData = (page, size, sort) => {
+        lastPagination.page = page;
+        lastPagination.size = size;
+        lastPagination.sort = sort;
 
-    const getData = () => {
-        // Get('main/ls/private').then(res => {
-        //     const data = res;
-        //     if (res) {
-        setPagination({
-            ...pagination,
-            loading: true
-        });
-        setCert([
-            {
-                _id: "1919199190",
-                title: "www.google.com",
-                issuer: "Stefanos Pap",
-                created_at: "06/04/2019 23:59",
-                expiry_date: "06/04/2020 23:59"
-            },
-            {
-                _id: "1919199191",
-                title: "www.stefanos.com",
-                issuer: "Kostas Papaionou",
-                created_at: "06/10/2019 23:59",
-                expiry_date: "06/01/2020 23:59"
-            },
-            {
-                _id: "1919199192",
-                title: "www.mis",
-                issuer: "Aggelos Fyselias",
-                created_at: "06/10/2018 23:59",
-                expiry_date: "08/04/2019 23:59"
-            },
-        ]);
-        // Update table certificates
-        // setCert(res.results);
+        let queryParams = '?page=' + page + '&size=' + size + (sort ? '&sort=' + sort : '');
 
-        // Update table pagination
-        console.log(pagination.loading);
-        setPagination({
-            ...pagination,
-            total: 3,
-            loading: false
-        });
-        //     }
-        // });
+        Get('certificates/paged' + queryParams).then(res => {
+            setLoading(false);
+            if (res) {
+                setTotal(res.total);
+                setCert(res.content);
+            }
+        }, errorCallBack);
+    }
+
+    const errorCallBack = (error) => {
+        console.log(error);
+        setLoading(false);
+        setTotal(0);
+        setCert([]);
+        message.error('An error occured!');
     }
 
     return (
@@ -167,17 +152,17 @@ const ListCertificates = () => {
             <Row className="Section">
                 <Col span={22} offset={1}>
                     <Title level={2}><Icon style={{ fontSize: 25 }} type="file-protect" /> Εκδομένα Πιστοποιητικά</Title>
-                    <Text>Προβολή πιστοποιητικών με λεπτομέριες και φίλτρα για αναζήτηση</Text>
+                    <Text>Προβολή πιστοποιητικών με λεπτομέριες</Text>
                 </Col>
             </Row>
             <Row >
                 <Col span={22} offset={1}>
                     <Table
                         columns={columns}
-                        rowKey={cert => cert._id}
+                        rowKey={cert => cert.id}
+                        pagination={{...PAGINATION, total: total}}
                         dataSource={cert}
-                        pagination={pagination}
-                        loading={pagination.loading}
+                        loading={loading}
                         onChange={handleTableChange}
                     />
                 </Col>

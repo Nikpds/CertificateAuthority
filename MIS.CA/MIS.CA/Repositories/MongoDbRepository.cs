@@ -79,6 +79,20 @@ namespace MIS.CA.Repositories
             return result;
         }
 
+        public virtual async Task<IEnumerable<T>> GetPageSorted(FilterDefinition<T> filter, SortDefinition<T> sort, int page, int pageSize, ProjectionDefinition<T> projection = null)
+        {
+            var documents = collection.Find(filter)
+                .Sort(sort)
+                .Skip(page > 0 ? (page - 1) * pageSize : 0)
+                .Limit(pageSize > 0 ? pageSize : 0);
+            if (projection != null)
+            {
+                documents = documents.Project<T>(projection);
+            }
+            var result = await documents.ToListAsync();
+            return result;
+        }
+
         public virtual async Task<T> Insert(T entity)
         {
             entity.Updated = DateTime.UtcNow;
