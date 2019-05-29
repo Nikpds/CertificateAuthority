@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import { Form, Icon, Typography, Button } from 'antd';
 import './ConfirmInfo.sass';
+import callFetch from '../../../services/UseFetch';
 const { Title, Paragraph, Text } = Typography;
 
 const confirm = props => {
-    console.log(props)
     const [crt, setCrt] = useState({ ...props.cert });
 
     const editHandler = (e, name) => {
@@ -24,8 +24,18 @@ const confirm = props => {
                 [name]: e
             })
         }
-
     }
+
+    const submitCertHandler = () => {
+        let crtCopy = { ...crt };
+        delete crtCopy.expires;
+        callFetch('main/generate', 'POST', crtCopy).then(res => {
+            if (res) {
+                props.next(4);
+            }
+        });
+    }
+
     const d = new Date(crt.expires)
     const expiredDate = d.getDate() + '-' + d.getMonth() + '-' + d.getFullYear();
     return (
@@ -93,7 +103,7 @@ const confirm = props => {
                             onClick={() => { history.push('/') }} >
                             Cancel
                     </Button>
-                        <Button type="primary" onClick={() => props.next(4)}>
+                        <Button type="primary" onClick={submitCertHandler}>
                             Create Certificates
                     <Icon type="step-forward" />
                         </Button>

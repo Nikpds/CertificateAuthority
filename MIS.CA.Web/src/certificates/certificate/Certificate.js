@@ -16,12 +16,10 @@ const Certificate = props => {
         duration: 1,
         request: null
     });
-    useEffect(() => {
-        console.log('This is Cert useEffect');
+    useEffect(() => {       
     }, [cert]);
 
-    useEffect(() => {
-        console.log('This is Step useEffect');
+    useEffect(() => {       
     }, [step]);
 
     const nextStepHandler = (step, data, name) => {
@@ -40,7 +38,6 @@ const Certificate = props => {
         var d = new Date();
         var year = d.getFullYear();
         const expires = new Date(year + years, d.getMonth(), d.getDate());
-        console.log(expires);
         setCert({
             ...cert,
             expires: expires,
@@ -64,18 +61,18 @@ const Certificate = props => {
             stepComponent = <Confirm next={finalStep} cert={cert} />;
             break;
         case 4:
-            stepComponent = <DownloadFiles next={finalStep} />;
+            stepComponent = <DownloadFiles next={finalStep} cert={cert} />;
             break;
         default:
             break;
     }
     return (
         <Row className={css.Row}>
-            <Col span={12} offset={3}>
+            <Col span={12} offset={1}>
                 {stepComponent}
             </Col>
-            <Col span={6} offset={3}>
-                <Steps step={cert.step} />
+            <Col span={8} offset={3}>
+                <Steps step={step} />
             </Col>
         </Row>
     );

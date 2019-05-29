@@ -14,7 +14,28 @@ namespace MIS.CA.Util
             {
                 return false;
             }
-            if (String.IsNullOrEmpty(certificate.Owner))
+            if (String.IsNullOrEmpty(certificate.Certificate))
+            {
+                return false;
+            }
+            //if (String.IsNullOrEmpty(certificate.Owner))
+            //{
+            //    return false;
+            //}
+            return true;
+        }
+
+        public static bool IsValidForGeneration(this CertificateRequest certificate)
+        {
+            if (!certificate.IsValid())
+            {
+                return false;
+            }
+            if (certificate.Duration == 0)
+            {
+                return false;
+            }
+            if (certificate.Request == null)
             {
                 return false;
             }

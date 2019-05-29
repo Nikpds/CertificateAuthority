@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MIS.CA.Models;
 using MIS.CA.Models.Views;
 using MIS.CA.Services;
+using MIS.CA.Util;
 using Renci.SshNet;
 
 namespace MIS.CA.Controllers
@@ -14,46 +17,42 @@ namespace MIS.CA.Controllers
     {
 
         private ISshService _isshService;
-        private IFtpService _iftpService;
+        private ISftpService _isftpService;
+        private CertificateService _certificateService;
 
-        public MainController(ISshService isshService, IFtpService iftpService)
+        public MainController(ISshService isshService, ISftpService isftpService, CertificateService certificateService)
         {
             this._isshService = isshService;
-            this._iftpService = iftpService;
+            this._isftpService = isftpService;
+            this._certificateService = certificateService;
         }
 
-        [HttpPost("{filename}")]
-        public IActionResult DownloadFile(string filename, [FromBody] Folder folder)
+        [HttpGet("{directory}/{filename}")]
+        public IActionResult DownloadFile(string directory, string filename)
         {
-
-
             try
             {
-                string host = "192.168.1.71";
-                string username = "root";
-                string password = "123456";
-                string localFileName = Path.GetFileName(@"C:\MyData");
-                string path = @"c:\temp\MyTest.txt";
-                using (var sftp = new SftpClient(host, username, password))
-                {
-                    sftp.Connect();
-
-                    var directory = sftp.ListDirectory("/root");
-                    using (var file = System.IO.File.OpenWrite(path))
-                    {
-                        sftp.BeginDownloadFile("/root/temp.txt", file);
-                    }
-
-                    sftp.Disconnect();
-                }
-                return Ok();
+                byte[] file = _isftpService.DownloadFile(directory, filename);
+                return File(file, "application/text", filename);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-
-                return BadRequest("Server Error while downloading file. Error :" + ex.Message);
+                return BadRequest(e);
             }
+        }
 
+        [HttpPost("generate")]
+        public async Task<IActionResult> GenerateRequestAsync([FromBody] CertificateRequest certificateRequest)
+        {
+            try
+            {
+                CertificateRequest createdCertificate = await _certificateService.GenerateCertificate(certificateRequest);
+                return Created("api/certificates/" + createdCertificate.Id, createdCertificate);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
 
         }
 
@@ -76,14 +75,32 @@ namespace MIS.CA.Controllers
             }
         }
 
-        [HttpDelete("{filename}")]
-        public IActionResult DeleteFile(string filename)
+        [HttpDelete("{directory}/{filename}")]
+        public IActionResult DeleteFile(string directory, string filename)
         {
 
+            if (string.IsNullOrEmpty(directory))
+            {
+                return BadRequest("Filename is directory");
+            }
             if (string.IsNullOrEmpty(filename))
             {
                 return BadRequest("Filename is mandatory");
             }
+            try
+            {
+                _isshService.DeleteFile(filename, directory);
+                return Ok(new { deleted = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error while listing directory.Error :" + ex.Message);
+            }
+        }
+
+        [HttpPost("crt/request")]
+        public IActionResult CreateCertificate([FromBody] CertificateRequest request)
+        {
             try
             {
 
@@ -91,7 +108,7 @@ namespace MIS.CA.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Error while listing directory.Error :" + ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }

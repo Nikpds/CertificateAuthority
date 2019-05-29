@@ -5,12 +5,19 @@ import './styles/index.sass';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import AuthProvider from './auth/AuthProvider';
+import { LocaleProvider } from 'antd';
+import el_GR from 'antd/lib/locale-provider/el_GR';
+import moment from 'moment';
+import 'moment/locale/el';
 
+moment.locale('el');
 
 const app = (
     <BrowserRouter>
         <AuthProvider>
-            <App />
+            <LocaleProvider locale={el_GR}>
+                <App />
+            </LocaleProvider>
         </AuthProvider>
     </BrowserRouter>
 );

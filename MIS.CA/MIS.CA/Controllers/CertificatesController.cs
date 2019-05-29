@@ -26,6 +26,20 @@ namespace MIS.CA.Controllers
             return Ok(certificates);
         }
 
+        [HttpGet("paged")]
+        public async Task<IActionResult> Get([FromQuery] int page, [FromQuery] int size, [FromQuery] string sort)
+        {
+            try
+            {
+                Page<CertificateRequest> certificates = await _certificateService.GetCertificateSorted(page, size, sort);
+                return Ok(certificates);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -45,8 +59,22 @@ namespace MIS.CA.Controllers
         {
             try
             {
-                CertificateRequest createdCertificate = await _certificateService.CreateCertificate(certificate);
+                CertificateRequest createdCertificate = await _certificateService.CreateExistingCertificate(certificate);
                 return CreatedAtAction(nameof(GetById), new { id = createdCertificate.Id }, createdCertificate);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete([FromRoute] string id)
+        {
+            try
+            {
+                _certificateService.DeleteCertificate(id);
+                return Ok(new { deleted = true });
             }
             catch (Exception e)
             {

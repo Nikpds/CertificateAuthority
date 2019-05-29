@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import Toolbar from './Toolbar/Toolbar';
 import { Layout as LayoutC } from 'antd';
 import utcss from '../styles/utilities.module.sass';
-import Sidebar from './sidebar/Sidebar';
+import Sidebar from './Sidebar';
 
 const { Content } = LayoutC;
 
@@ -17,7 +17,7 @@ const Layout = props => {
             <LayoutC>
                 {toolbar}
             </LayoutC>
-            <LayoutC className={utcss.IsFullheight}>
+            <LayoutC className={cssHeight}>
                 {sidebar}
                 <Content className={cssHeight}>
                     {props.children}
