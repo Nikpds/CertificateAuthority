@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { Form, Icon, Button, Typography as T } from 'antd';
 import { AuthContext } from '../../context/AuthContext';
+import callFetch from '../../services/UseFetch';
 import './Login.css';
 const Login = props => {
-    const auth = useContext(AuthContext)
+    const auth = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const usernameHandler = (e) => {
@@ -12,8 +13,16 @@ const Login = props => {
     const passwordHandler = (e) => {
         setPassword(e.target.value);
     }
-    const loginHandler = () => {
-        auth.signIn(username, password);
+    const loginHandler = async () => {
+        const body = {
+            username: username,
+            password: password
+        }
+        callFetch('auth', 'POST', body).then(res => {
+            if (res && res.token) {
+                auth.signIn(res.token);
+            }
+        });
     }
     return (
         <Form className="login-container">

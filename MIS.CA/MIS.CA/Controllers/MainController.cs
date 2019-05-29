@@ -34,7 +34,9 @@ namespace MIS.CA.Controllers
             {
                 byte[] file = _isftpService.DownloadFile(directory, filename);
                 return File(file, "application/text", filename);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e);
             }
         }
@@ -46,10 +48,12 @@ namespace MIS.CA.Controllers
             {
                 CertificateRequest createdCertificate = await _certificateService.GenerateCertificate(certificateRequest);
                 return Created("api/certificates/" + createdCertificate.Id, createdCertificate);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e);
             }
-            
+
         }
 
         [HttpGet("ls/{directory}")]
@@ -86,7 +90,7 @@ namespace MIS.CA.Controllers
             try
             {
                 _isshService.DeleteFile(filename, directory);
-                return Ok();
+                return Ok(new { deleted = true });
             }
             catch (Exception ex)
             {

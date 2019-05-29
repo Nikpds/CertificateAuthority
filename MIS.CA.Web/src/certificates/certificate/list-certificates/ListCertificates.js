@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Typography, Table, Icon, Divider, Button, Popconfirm, message} from 'antd';
+import { Row, Col, Typography, Table, Icon, Divider, Button, Popconfirm, message } from 'antd';
 import moment from 'moment';
-import {Get, Delete, baseurl} from '../../../services/Utility';
+import callFetch, { api } from '../../../services/UseFetch';
 
 const { Text, Title } = Typography
 
@@ -42,7 +42,7 @@ const ListCertificates = () => {
         title: 'Title',
         dataIndex: 'certificate',
         sorter: true,
-    }, 
+    },
     {
         title: 'Organization Name',
         dataIndex: 'request.organization',
@@ -57,7 +57,7 @@ const ListCertificates = () => {
         title: 'Date Issued',
         dataIndex: 'created',
         sorter: true,
-    }, 
+    },
     {
         title: 'Expiry Date',
         dataIndex: 'expires',
@@ -67,7 +67,7 @@ const ListCertificates = () => {
                 {date} {Expires(date)}
             </span>
         ),
-    }, 
+    },
     {
         title: 'Action',
         render: (text, cert) => (
@@ -91,23 +91,23 @@ const ListCertificates = () => {
 
     const DeleteCert = (certId) => {
         setLoading(true);
-        Delete('certificates/' + certId)
-        .then(resp => {
-            
-            if (resp.ok) {
+        callFetch('certificates/' + certId, 'DELETE').then(res => {
+            if (res) {
                 message.info('Το αρχείο διαγράφτηκε επιτυχώς');
                 const pageToLoad = lastPagination.page > 0 && cert.length === 1 ? lastPagination.page - 1 : lastPagination.page;
                 getData(pageToLoad, lastPagination.size, lastPagination.sort);
             } else {
                 errorCallBack();
             }
-        }, errorCallBack)
-        .catch(errorCallBack);
+        });
     }
 
     const DownloadCert = (cert) => {
-        console.log(baseurl + 'main/certs/' + cert.certificate + '.crt');
-        window.location.href = baseurl + 'main/certs/' + cert.certificate + '.crt';
+        callFetch('main/certs/' + cert.certificate + '.crt', 'GET').then(res => {
+            if (res !== null) {
+                window.location.href = api + 'main/certs/' + cert.certificate + '.crt';
+            }
+        });
     }
 
     const handleTableChange = (pag, filters, sorter) => {
@@ -129,22 +129,21 @@ const ListCertificates = () => {
         lastPagination.sort = sort;
 
         let queryParams = '?page=' + page + '&size=' + size + (sort ? '&sort=' + sort : '');
-
-        Get('certificates/paged' + queryParams).then(res => {
+        callFetch('certificates/paged' + queryParams, 'GET').then(res => {
             setLoading(false);
             if (res) {
                 setTotal(res.total);
                 setCert(res.content);
+            } else {
+                errorCallBack();
             }
-        }, errorCallBack);
+        });
     }
 
     const errorCallBack = (error) => {
-        console.log(error);
         setLoading(false);
         setTotal(0);
         setCert([]);
-        message.error('An error occured!');
     }
 
     return (
@@ -160,7 +159,7 @@ const ListCertificates = () => {
                     <Table
                         columns={columns}
                         rowKey={cert => cert.id}
-                        pagination={{...PAGINATION, total: total}}
+                        pagination={{ ...PAGINATION, total: total }}
                         dataSource={cert}
                         loading={loading}
                         onChange={handleTableChange}

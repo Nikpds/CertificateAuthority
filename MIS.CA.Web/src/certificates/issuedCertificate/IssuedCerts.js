@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Icon, Input, Button, Typography, DatePicker, Row, Col, message } from 'antd';
 import classes from './IssuedCerts.sass';
-import { Post } from '../../services/Utility';
-
+import callFetch from '../../services/UseFetch';
 const { Title } = Typography;
 const oldCertificate = props => {
     const formItemLayout = {
@@ -43,8 +42,6 @@ const oldCertificate = props => {
         })
     };
     const updateNestedFieldHandler = (e) => {
-        console.log(e);
-        //const field = type === 'text' ? e.target.name : type
         setCertData({
             ...certData,
             request: {
@@ -53,20 +50,20 @@ const oldCertificate = props => {
             }
         })
     };
+    const clearHandler = () => {
+        props.form.resetFields();
+    }
     // το clickMe που εκτελείται στην onClick: 
     const submitHandler = () => {
-        console.log('eimai edw' + certData);
-        console.log(certData);
         props.form.validateFields((err, fieldsValue) => {
             if (err) {
-                console.log(fieldsValue);
                 return;
             }
-            Post('certificates/', certData).then((cert) => {
-                message.info('Το πιστοποιητικό καταγράφηκε!');
-            }, (error) => {
-                console.log(error);
-                message.error('Σφάλμα κατά την καταγραφή του πιστοποιητικού!');
+            callFetch('certificates/', 'POST', certData).then(res => {
+                if (res) {
+                    message.info('Το πιστοποιητικό καταγράφηκε!');
+                    clearHandler();
+                }
             });
         });
     };
@@ -145,7 +142,7 @@ const oldCertificate = props => {
                     </Form.Item>
                     <Form.Item>
                         <div style={{ marginTop: 30, float: 'right' }}>
-                            <Button type="danger" style={{ marginRight: 8 }}>Εκκαθάριση Φόρμας</Button>
+                            <Button type="danger" onClick={clearHandler} style={{ marginRight: 8 }}>Εκκαθάριση Φόρμας</Button>
                             <Button type="primary" onClick={() => submitHandler()} className={classes.Button}>
                                 <Icon type="save" />
                                 Αποθήκευση Πληροφοριών Πιστοποιητικού

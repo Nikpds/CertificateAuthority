@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import { Form, Icon, Typography, Button } from 'antd';
 import './ConfirmInfo.sass';
-import { Post as post } from '../../../services/Utility';
+import callFetch from '../../../services/UseFetch';
 const { Title, Paragraph, Text } = Typography;
 
 const confirm = props => {
-    console.log(props)
     const [crt, setCrt] = useState({ ...props.cert });
 
     const editHandler = (e, name) => {
@@ -28,15 +27,12 @@ const confirm = props => {
     }
 
     const submitCertHandler = () => {
-        let crtCopy = {...crt};
+        let crtCopy = { ...crt };
         delete crtCopy.expires;
-        console.log("The following object will be posted ", crtCopy);
-        post('main/generate', crtCopy)
-        .then(() => {
-            props.next(4);
-        }, (error) => {
-            console.log(error);
-            alert('Error creating certificate');
+        callFetch('main/generate', 'POST', crtCopy).then(res => {
+            if (res) {
+                props.next(4);
+            }
         });
     }
 

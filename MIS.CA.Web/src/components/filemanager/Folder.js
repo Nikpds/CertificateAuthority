@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Skeleton, Icon, Badge, Input, Popconfirm, message } from 'antd';
-import { Get, Delete, baseurl } from '../../services/Utility';
+import callFetch, { api } from '../../services/UseFetch';
 
 const Folder = (props) => {
     const [files, setFiles] = useState([]);
@@ -12,16 +12,23 @@ const Folder = (props) => {
     }, []);
 
     const getData = () => {
-        Get('main/ls/' + props.path).then(res => {
-            const data = res;
+        callFetch('main/ls/' + props.path, 'GET').then(res => {
             if (res) {
-                setFiles(data);
+                setFiles(res);
             }
         });
     }
 
     const search = (value) => {
         setSearchValue(value);
+    }
+    const DownloadCert = (url) => {
+        callFetch(url, 'GET').then(res => {
+            if (res !== null) {
+                window.location.href = api + url;
+            }
+
+        });
     }
 
     const calculateDataToDisplay = () => {
@@ -34,21 +41,14 @@ const Folder = (props) => {
     }
 
     const deleteFile = (file) => {
-        Delete('main/' + props.path + '/' + file)
-        .then(resp => {
-            if (resp.ok) {
+        callFetch('main/' + props.path + '/' + file, 'DELETE').then(res => {
+            if (res) {
                 message.info('Το αρχείο διαγράφτηκε επιτυχώς');
                 let filesCopy = [...files];
                 const index = filesCopy.findIndex((f) => file === f);
                 filesCopy.splice(index, 1);
                 setFiles(filesCopy);
-            } else {
-                message.error('An error occured while deleting the file');
             }
-        })
-        .catch(error => {
-            console.log(error);
-            message.error('An error occured while deleting the file');
         });
     }
 
@@ -82,9 +82,10 @@ const Folder = (props) => {
             renderItem={(item) => (
                 <List.Item actions={[
                     <Popconfirm title="Είστε σίγουρος για την διαγραφή αρχείου?" onConfirm={() => { deleteFile(item) }} okText="Yes" cancelText="No">
-                        <span className="Link" title="Διαγραφή"><Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" /></span>,
+                        <span className="Link" title="Διαγραφή"><Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" /></span>
                     </Popconfirm>,
-                    <a className="Link" href={baseurl +'main/' + props.path + '/' + item} title="Κατέβασμα"><Icon type="download" /></a>]}>
+                    <span className="Link" onClick={() => DownloadCert('main/' + props.path + '/' + item)} title="Κατέβασμα">
+                        <Icon type="download" /></span>]}>
                     <Skeleton avatar title={false} loading={false} >
                         <List.Item.Meta title={item} />
                     </Skeleton>

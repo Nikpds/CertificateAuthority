@@ -12,8 +12,6 @@ const Sidebar = () => {
     return (
         <Sider style={{ width: 256 }} collapsed={collapsed}>
             <Menu
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
                 mode="inline"
                 theme="dark"
                 style={{ height: '100%' }} >
@@ -41,7 +39,7 @@ const Sidebar = () => {
                 </Menu.Item>
             </Menu>
         </Sider>
-            );
-        };
-        
+    );
+};
+
 export default Sidebar;

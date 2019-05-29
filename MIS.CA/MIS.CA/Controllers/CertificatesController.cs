@@ -74,7 +74,7 @@ namespace MIS.CA.Controllers
             try
             {
                 _certificateService.DeleteCertificate(id);
-                return NoContent();
+                return Ok(new { deleted = true });
             }
             catch (Exception e)
             {

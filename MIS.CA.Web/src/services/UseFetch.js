@@ -1,22 +1,37 @@
-import { useState, useEffect } from "react";
+import { notification } from 'antd';
+import LocalStorage from '../services/LocalStorage';
+export const  api = 'http://11.1.9.96:64331/api/'
+const callFetch = async (url, method, data) => {
 
-function useFetch(url) {
-    const [result, setResult] = useState({
-        data: null,
-        loader: true
-    });
-    async function fetchUrl() {
-        const response = await fetch(url);
-        const json = await response.json();
-        setResult({
-            data: json,
-            loader: false
-        });
-    }
-    useEffect(() => {
-        fetchUrl();
-    }, []);
+    const result = await (await fetch(api + url, {
+        method: method,
+        headers: headers(),
+        body: data ? JSON.stringify(data) : null
+    }).then(async res => {
+        if (res.ok) {
+            return res.json();
+        } else {
+            const message = await res.json();
+            notification['error']({
+                message: 'Σφάλμα',
+                description: message.Message
+            });
+            return null;
+        }
+    }).catch(() => {
+        // to do error handling
+    }));
 
-    return [result];
+    return result;
 }
-export { useFetch };
+export default callFetch;
+
+const headers = () => {
+    const h = new Headers();
+    h.append('Content-Type', 'application/json');
+    const token = LocalStorage.get('token');
+    if (token) {
+        h.append('Authorization', `Bearer ${token}`);
+    }
+    return h;
+}
